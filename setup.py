@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='itk-cleaver',
-    version='0.0.1',
+    version='0.0.2',
     author='SCI Institute',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],
