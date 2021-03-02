@@ -1,2 +1,2 @@
 # ITKCleaver
-Wrapper for Cleaver to use as an ITK filter
+ITK module wrapping Cleaver functionalities used for MultiMaterial Tetrahedral Meshing
