@@ -8,10 +8,10 @@ itk_module(Cleaver
   DEPENDS
     ITKCommon
   COMPILE_DEPENDS
-    ITKImageSources
+    ITKMesh
   TEST_DEPENDS
     ITKTestKernel
-    ITKMetaIO
+    ITKIONRRD
   DESCRIPTION
     "${DOCUMENTATION}"
   EXCLUDE_FROM_DEFAULT
