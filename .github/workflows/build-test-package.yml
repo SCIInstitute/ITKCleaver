@@ -99,6 +99,11 @@ jobs:
           \${CTEST_CUSTOM_WARNING_EXCEPTION}
           # macOS Azure VM Warning
           "ld: warning: text-based stub file"
+<<<<<<< HEAD
+          "libcleaver.a.*has no symbols"
+=======
+          "libcleaver.a(ScaledField.cpp.o) has no symbols"
+>>>>>>> db94563... COMP: Ignore macOS Cleaver ScalarField.cpp.o has no symbols
           )
         set(dashboard_no_clean 1)
         set(ENV{CC} ${{ matrix.c-compiler }})

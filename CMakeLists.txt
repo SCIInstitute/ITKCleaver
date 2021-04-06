@@ -8,7 +8,7 @@ set(_itk_build_shared ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS OFF)
 #set(cleaver_GIT_REPOSITORY "https://github.com/SCIInstitute/Cleaver2")
 set(cleaver_GIT_REPOSITORY "https://github.com/thewtex/Cleaver2")
-set(cleaver_GIT_TAG "f922e9d2e49ca26026625c1027b0b6a6433bc11e")
+set(cleaver_GIT_TAG "15d39c2ea70301dd3b6db8f532681d547abea9fe")
 FetchContent_Declare(
   cleaver_lib
   GIT_REPOSITORY ${cleaver_GIT_REPOSITORY}
