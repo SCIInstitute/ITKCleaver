@@ -18,7 +18,7 @@
 #ifndef itkCleaverImageToMeshFilter_h
 #define itkCleaverImageToMeshFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkImageToMeshFilter.h"
 
 namespace itk
 {
@@ -34,7 +34,7 @@ namespace itk
  *
  */
 template <typename TInputImage, typename TOutputImage>
-class CleaverImageToMeshFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+class CleaverImageToMeshFilter : public ImageToMeshFilter<TInputImage, TOutputImage>
 {
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(CleaverImageToMeshFilter);
@@ -49,12 +49,12 @@ public:
 
   /** Standard class typedefs. */
   using Self = CleaverImageToMeshFilter<InputImageType, OutputImageType>;
-  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Superclass = ImageToMeshFilter<InputImageType, OutputImageType>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information. */
-  itkTypeMacro(CleaverImageToMeshFilter, ImageToImageFilter);
+  itkTypeMacro(CleaverImageToMeshFilter, ImageToMeshFilter);
 
   /** Standard New macro. */
   itkNewMacro(Self);

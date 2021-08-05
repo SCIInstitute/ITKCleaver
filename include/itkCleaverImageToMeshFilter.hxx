@@ -26,38 +26,38 @@
 namespace itk
 {
 
-template <typename TInputImage, typename TOutputImage>
-CleaverImageToMeshFilter<TInputImage, TOutputImage>
+template <typename TInputImage, typename TOutputMesh>
+CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 ::CleaverImageToMeshFilter()
 {}
 
 
-template <typename TInputImage, typename TOutputImage>
+template <typename TInputImage, typename TOutputMesh>
 void
-CleaverImageToMeshFilter<TInputImage, TOutputImage>
+CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 ::PrintSelf(std::ostream & os, Indent indent) const
 {
   Superclass::PrintSelf(os, indent);
 }
 
 
-template <typename TInputImage, typename TOutputImage>
+template <typename TInputImage, typename TOutputMesh>
 void
-CleaverImageToMeshFilter<TInputImage, TOutputImage>
-::DynamicThreadedGenerateData(const OutputRegionType & outputRegion)
+CleaverImageToMeshFilter<TInputImage, TOutputMesh>
+::GenerateData()
 {
-  OutputImageType *      output = this->GetOutput();
-  const InputImageType * input = this->GetInput();
-  using InputRegionType = typename InputImageType::RegionType;
-  InputRegionType inputRegion = InputRegionType(outputRegion.GetSize());
+  //OutputMeshType *      output = this->GetOutput();
+  //const InputImageType * input = this->GetInput();
+  //using InputRegionType = typename InputImageType::RegionType;
+  //InputRegionType inputRegion = InputRegionType(outputRegion.GetSize());
 
-  itk::ImageRegionConstIterator<InputImageType> in(input, inputRegion);
-  itk::ImageRegionIterator<OutputImageType>     out(output, outputRegion);
+  //itk::ImageRegionConstIterator<InputImageType> in(input, inputRegion);
+  //itk::ImageRegionIterator<OutputMeshType>     out(output, outputRegion);
 
-  for (in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd() && !out.IsAtEnd(); ++in, ++out)
-  {
-    out.Set(in.Get());
-  }
+  //for (in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd() && !out.IsAtEnd(); ++in, ++out)
+  //{
+    //out.Set(in.Get());
+  //}
 }
 
 } // end namespace itk
