@@ -6,9 +6,8 @@ set(_itk_build_testing ${BUILD_TESTING})
 #set(BUILD_TESTING OFF)
 set(_itk_build_shared ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS OFF)
-#set(cleaver_GIT_REPOSITORY "https://github.com/SCIInstitute/Cleaver2")
-set(cleaver_GIT_REPOSITORY "https://github.com/thewtex/Cleaver2")
-set(cleaver_GIT_TAG "15d39c2ea70301dd3b6db8f532681d547abea9fe")
+set(cleaver_GIT_REPOSITORY "https://github.com/SCIInstitute/Cleaver2")
+set(cleaver_GIT_TAG "02ba7b5fda5578b348a1dd54fb1660ef6cc7faf2")
 FetchContent_Declare(
   cleaver_lib
   GIT_REPOSITORY ${cleaver_GIT_REPOSITORY}
