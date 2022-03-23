@@ -40,7 +40,7 @@ public:
   ITK_DISALLOW_COPY_AND_ASSIGN(CleaverImageToMeshFilter);
 
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
-  static constexpr unsigned int OutputMeshDimension = TOutputMesh::ImageDimension;
+  static constexpr unsigned int OutputMeshDimension = TOutputMesh::PointDimension;
 
   using InputImageType = TInputImage;
   using OutputMeshType = TOutputMesh;
