@@ -18,7 +18,7 @@
 #ifndef itkCleaverImageToMeshFilter_h
 #define itkCleaverImageToMeshFilter_h
 
-#include "itkImageToImageFilter.h"
+#include "itkImageToMeshFilter.h"
 
 namespace itk
 {
@@ -33,28 +33,28 @@ namespace itk
  * \ingroup Cleaver
  *
  */
-template <typename TInputImage, typename TOutputImage>
-class CleaverImageToMeshFilter : public ImageToImageFilter<TInputImage, TOutputImage>
+template <typename TInputImage, typename TOutputMesh>
+class CleaverImageToMeshFilter : public ImageToMeshFilter<TInputImage, TOutputMesh>
 {
 public:
   ITK_DISALLOW_COPY_AND_ASSIGN(CleaverImageToMeshFilter);
 
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
-  static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
+  static constexpr unsigned int OutputMeshDimension = TOutputMesh::PointDimension;
 
   using InputImageType = TInputImage;
-  using OutputImageType = TOutputImage;
+  using OutputMeshType = TOutputMesh;
   using InputPixelType = typename InputImageType::PixelType;
-  using OutputPixelType = typename OutputImageType::PixelType;
+  using OutputPixelType = typename OutputMeshType::PixelType;
 
   /** Standard class typedefs. */
-  using Self = CleaverImageToMeshFilter<InputImageType, OutputImageType>;
-  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Self = CleaverImageToMeshFilter<InputImageType, OutputMeshType>;
+  using Superclass = ImageToMeshFilter<InputImageType, OutputMeshType>;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information. */
-  itkTypeMacro(CleaverImageToMeshFilter, ImageToImageFilter);
+  itkTypeMacro(CleaverImageToMeshFilter, ImageToMeshFilter);
 
   /** Standard New macro. */
   itkNewMacro(Self);
@@ -65,15 +65,11 @@ protected:
 
   void PrintSelf(std::ostream & os, Indent indent) const override;
 
-  using OutputRegionType = typename OutputImageType::RegionType;
+  using OutputRegionType = typename OutputMeshType::RegionType;
 
-  void DynamicThreadedGenerateData(const OutputRegionType & outputRegion) override;
+  void GenerateData() override;
 
 private:
-#ifdef ITK_USE_CONCEPT_CHECKING
-  // Add concept checking such as
-  // itkConceptMacro( FloatingPointPixel, ( itk::Concept::IsFloatingPoint< typename InputImageType::PixelType > ) );
-#endif
 };
 } // namespace itk
 

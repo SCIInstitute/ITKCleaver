@@ -19,7 +19,7 @@
 #include "itkCleaverImageToMeshFilter.h"
 
 #include "itkCommand.h"
-#include "itkImageFileWriter.h"
+#include "itkImageFileReader.h"
 #include "itkTestingMacros.h"
 
 namespace
@@ -54,44 +54,40 @@ public:
 
 int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
 {
-  if (argc < 2)
+  if (argc < 3)
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
-    std::cerr << " outputImage";
+    std::cerr << " inputImage";
+    std::cerr << " outputMesh";
     std::cerr << std::endl;
     return EXIT_FAILURE;
   }
-  const char * outputImageFileName = argv[1];
+  const char * inputImageFileName = argv[1];
+  const char * outputMeshFileName = argv[2];
 
-  constexpr unsigned int Dimension = 2;
+  constexpr unsigned int Dimension = 3;
   using PixelType = float;
   using ImageType = itk::Image<PixelType, Dimension>;
 
-  using FilterType = itk::CleaverImageToMeshFilter<ImageType, ImageType>;
-  FilterType::Pointer filter = FilterType::New();
+  //ImageType::ConstPointer image = itk::ReadImage<ImageType>(inputImageFileName);
 
-  ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToImageFilter);
+  //using FilterType = itk::CleaverImageToMeshFilter<ImageType, ImageType>;
+  //FilterType::Pointer filter = FilterType::New();
 
-  // Create input image to avoid test dependencies.
-  ImageType::SizeType size;
-  size.Fill(128);
-  ImageType::Pointer image = ImageType::New();
-  image->SetRegions(size);
-  image->Allocate();
-  image->FillBuffer(1.1f);
+  //ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToMeshFilter);
 
-  ShowProgress::Pointer showProgress = ShowProgress::New();
-  filter->AddObserver(itk::ProgressEvent(), showProgress);
-  filter->SetInput(image);
+  //ShowProgress::Pointer showProgress = ShowProgress::New();
+  //filter->AddObserver(itk::ProgressEvent(), showProgress);
+  //filter->SetInput(image);
 
-  using WriterType = itk::ImageFileWriter<ImageType>;
-  WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName(outputImageFileName);
-  writer->SetInput(filter->GetOutput());
-  writer->SetUseCompression(true);
+  //using WriterType = itk::ImageFileWriter<ImageType>;
+  //WriterType::Pointer writer = WriterType::New();
+  //writer->SetFileName(outputImageFileName);
+  //writer->SetInput(filter->GetOutput());
+  //writer->SetUseCompression(true);
 
-  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
+  //ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
 
   std::cout << "Test finished." << std::endl;
