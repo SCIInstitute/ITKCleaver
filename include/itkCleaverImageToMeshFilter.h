@@ -59,6 +59,33 @@ public:
   /** Standard New macro. */
   itkNewMacro(Self);
 
+  itkSetMacro(Alpha, double);
+  itkGetConstMacro(Alpha, double);
+
+  itkSetMacro(AlphaLong, double);
+  itkGetConstMacro(AlphaLong, double);
+
+  itkSetMacro(AlphaShort, double);
+  itkGetConstMacro(AlphaShort, double);
+
+  itkSetMacro(SamplingRate, double);
+  itkGetConstMacro(SamplingRate, double);
+
+  itkSetMacro(Lipschitz, double);
+  itkGetConstMacro(Lipschitz, double);
+
+  itkSetMacro(FeatureScaling, double);
+  itkGetConstMacro(FeatureScaling, double);
+
+  itkSetMacro(Padding, int);
+  itkGetConstMacro(Padding, int);
+
+  itkSetMacro(MaxIterations, int);
+  itkGetConstMacro(MaxIterations, int);
+
+  itkSetMacro(Sigma, double);
+  itkGetConstMacro(Sigma, double);
+
 protected:
   CleaverImageToMeshFilter();
   ~CleaverImageToMeshFilter() override = default;
@@ -70,6 +97,15 @@ protected:
   void GenerateData() override;
 
 private:
+  double m_Alpha{0.4};
+  double m_AlphaLong{0.357};
+  double m_AlphaShort{0.203};
+  double m_SamplingRate{1.0};
+  double m_Lipschitz{0.2};
+  double m_FeatureScaling{1.0};
+  int m_Padding{0};
+  int m_MaxIterations{1000};
+  double m_Sigma{1.0};
 };
 } // namespace itk
 
