@@ -29,7 +29,10 @@ namespace itk
 template <typename TInputImage, typename TOutputMesh>
 CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 ::CleaverImageToMeshFilter()
-{}
+{
+  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredOutputs(1);
+}
 
 
 template <typename TInputImage, typename TOutputMesh>
@@ -46,6 +49,15 @@ void
 CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 ::GenerateData()
 {
+  if (this->GetNumberOfIndexedInputs() > 1 || this->GetInputIsIndicatorFunction())
+  {
+
+  }
+  else
+  {
+
+  }
+  std::cout << "inputs: " << this->GetNumberOfIndexedInputs() << std::endl;
   //OutputMeshType *      output = this->GetOutput();
   //const InputImageType * input = this->GetInput();
   //using InputRegionType = typename InputImageType::RegionType;

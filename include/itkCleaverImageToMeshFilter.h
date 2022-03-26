@@ -59,6 +59,13 @@ public:
   /** Standard New macro. */
   itkNewMacro(Self);
 
+  /** Is the input image a label image or an indicator function? This is only used if
+   * there is only one input. Otherwise, indicator functions are assumed.
+   */
+  itkSetMacro(InputIsIndicatorFunction, bool);
+  itkGetConstReferenceMacro(InputIsIndicatorFunction, bool);
+  itkBooleanMacro(InputIsIndicatorFunction);
+
   itkSetMacro(Alpha, double);
   itkGetConstMacro(Alpha, double);
 
@@ -97,6 +104,7 @@ protected:
   void GenerateData() override;
 
 private:
+  bool m_InputIsIndicatorFunction{false};
   double m_Alpha{0.4};
   double m_AlphaLong{0.357};
   double m_AlphaShort{0.203};

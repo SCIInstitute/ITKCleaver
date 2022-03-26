@@ -21,6 +21,7 @@
 #include "itkCommand.h"
 #include "itkImageFileReader.h"
 #include "itkTestingMacros.h"
+#include "itkMesh.h"
 
 namespace
 {
@@ -58,27 +59,37 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   {
     std::cerr << "Missing parameters." << std::endl;
     std::cerr << "Usage: " << itkNameOfTestExecutableMacro(argv);
-    std::cerr << " inputImage";
     std::cerr << " outputMesh";
+    std::cerr << " inputImage [inputImage2] [inputImage3] [...]";
     std::cerr << std::endl;
     return EXIT_FAILURE;
   }
-  const char * inputImageFileName = argv[1];
-  const char * outputMeshFileName = argv[2];
+  const char * outputMeshFileName = argv[1];
 
   constexpr unsigned int Dimension = 3;
   using PixelType = float;
   using ImageType = itk::Image<PixelType, Dimension>;
+  using MeshType = itk::Mesh<PixelType, Dimension>;
 
-  //ImageType::ConstPointer image = itk::ReadImage<ImageType>(inputImageFileName);
+  using FilterType = itk::CleaverImageToMeshFilter<ImageType, ImageType>;
+  FilterType::Pointer filter = FilterType::New();
 
-  //using FilterType = itk::CleaverImageToMeshFilter<ImageType, ImageType>;
-  //FilterType::Pointer filter = FilterType::New();
+  ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToMeshFilter);
 
-  //ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToMeshFilter);
+  for (int ii = 2; ii < argc; ii++)
+    {
+    const char * inputImageFileName = argv[ii];
+    auto image = itk::ReadImage<ImageType>(inputImageFileName);
+    filter->SetInput(ii-2, image);
+    }
 
-  //ShowProgress::Pointer showProgress = ShowProgress::New();
-  //filter->AddObserver(itk::ProgressEvent(), showProgress);
+  bool isIndicator = true;
+  filter->SetInputIsIndicatorFunction(isIndicator);
+  ITK_TEST_SET_GET_VALUE(isIndicator, filter->GetInputIsIndicatorFunction());
+  filter->SetInputIsIndicatorFunction(false);
+
+  ShowProgress::Pointer showProgress = ShowProgress::New();
+  filter->AddObserver(itk::ProgressEvent(), showProgress);
   //filter->SetInput(image);
 
   //using WriterType = itk::ImageFileWriter<ImageType>;
@@ -87,6 +98,7 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   //writer->SetInput(filter->GetOutput());
   //writer->SetUseCompression(true);
 
+  filter->Update();
   //ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
 
