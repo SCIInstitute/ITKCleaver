@@ -3,13 +3,14 @@ itk_wrap_include("itkDefaultStaticMeshTraits.h")
 
 itk_wrap_class("itk::CleaverImageToMeshFilter" POINTER)
   UNIQUE(mesh_types "${WRAP_ITK_SCALAR};D")
-  foreach(d ${ITK_WRAP_IMAGE_DIMS})
+  # foreach(d ${ITK_WRAP_IMAGE_DIMS})
+  set(d 3)
     foreach(t ${WRAP_ITK_SCALAR})
       foreach(t2 ${mesh_types})
         itk_wrap_template("${ITKM_I${t}${d}}M${ITKM_${t2}}${d}"
           "${ITKT_I${t}${d}}, itk::Mesh< ${ITKT_${t2}},${d} >")
       endforeach()
     endforeach()
-  endforeach()
+  # endforeach()
 itk_end_wrap_class()
 

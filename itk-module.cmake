@@ -8,7 +8,12 @@ itk_module(Cleaver
   DEPENDS
     ITKCommon
   COMPILE_DEPENDS
+    ITKThresholding
     ITKMesh
+    ITKImageFilterBase
+    ITKSmoothing
+    ITKImageIntensity
+    ITKDistanceMap
   TEST_DEPENDS
     ITKTestKernel
     ITKIONRRD
