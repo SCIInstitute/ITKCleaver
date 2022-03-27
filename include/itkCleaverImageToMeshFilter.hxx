@@ -171,7 +171,70 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   // std::cout << "Min Dihedral: " << mesh->min_angle << std::endl;
   // std::cout << "Max Dihedral: " << mesh->max_angle << std::endl;
 
-  OutputMeshType *      output = this->GetOutput();
+  //         Create Pruned Vertex List
+  class vec3_compare {
+    public:
+      bool operator()(const cleaver::vec3 &a, const cleaver::vec3 &b) const {
+        if ((a.x < b.x) && (b.x - a.x) > 1e-9) return true;
+        else if ((a.x > b.x) && (a.x - b.x) > 1e-9) return false;
+        if ((a.y < b.y) && (b.y - a.y) > 1e-9) return true;
+        else if ((a.y > b.y) && (a.y - b.y) > 1e-9) return false;
+        if ((a.z < b.z) && (b.z - a.z) > 1e-9) return true;
+        else if ((a.z > b.z) && (a.z - b.z) > 1e-9) return false;
+        return false;
+      }
+  };
+
+  using VertMap = std::map< const cleaver::vec3, size_t, vec3_compare >;
+  VertMap vertMap;
+  std::vector<cleaver::vec3> prunedVerts;
+  size_t prunedPos = 0;
+  for(size_t t=0; t < mesh->tets.size(); t++) {
+    cleaver::Tet* tet = mesh->tets[t];
+
+    cleaver::Vertex *v1 = tet->verts[0];
+    cleaver::Vertex *v2 = tet->verts[1];
+    cleaver::Vertex *v3 = tet->verts[2];
+    cleaver::Vertex *v4 = tet->verts[3];
+
+    cleaver::vec3 p1 = v1->pos();
+    cleaver::vec3 p2 = v2->pos();
+    cleaver::vec3 p3 = v3->pos();
+    cleaver::vec3 p4 = v4->pos();
+
+    if (!vertMap.count(p1)) {
+      vertMap.insert(std::pair<cleaver::vec3,size_t>(p1,prunedPos));
+      prunedPos++;
+      prunedVerts.push_back(p1);
+    }
+    if (!vertMap.count(p2)) {
+      vertMap.insert(std::pair<cleaver::vec3,size_t>(p2,prunedPos));
+      prunedPos++;
+      prunedVerts.push_back(p2);
+    }
+    if (!vertMap.count(p3)) {
+      vertMap.insert(std::pair<cleaver::vec3,size_t>(p3,prunedPos));
+      prunedPos++;
+      prunedVerts.push_back(p3);
+    }
+    if (!vertMap.count(p4)) {
+      vertMap.insert(std::pair<cleaver::vec3,size_t>(p4,prunedPos));
+      prunedPos++;
+      prunedVerts.push_back(p4);
+    }
+  }
+
+  OutputMeshType * output = this->GetOutput(); 
+  for (size_t ii = 0; ii < prunedVerts.size(); ii++)
+  {
+    typename OutputMeshType::PointType point;
+    point[0] = prunedVerts[ii].x;
+    point[1] = prunedVerts[ii].y;
+    point[2] = prunedVerts[ii].z;
+    output->SetPoint(ii, point);
+  }
+
+  // auto pointsContainer = output->GetPoints();
 
   for (auto field: fields)
   {

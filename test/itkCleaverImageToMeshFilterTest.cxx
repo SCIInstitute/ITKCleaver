@@ -71,7 +71,7 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   using ImageType = itk::Image<PixelType, Dimension>;
   using MeshType = itk::Mesh<PixelType, Dimension>;
 
-  using FilterType = itk::CleaverImageToMeshFilter<ImageType, ImageType>;
+  using FilterType = itk::CleaverImageToMeshFilter<ImageType, MeshType>;
   FilterType::Pointer filter = FilterType::New();
 
   ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToMeshFilter);
@@ -90,13 +90,11 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
 
   ShowProgress::Pointer showProgress = ShowProgress::New();
   filter->AddObserver(itk::ProgressEvent(), showProgress);
-  //filter->SetInput(image);
 
-  //using WriterType = itk::ImageFileWriter<ImageType>;
+  //using WriterType = itk::MeshFileWriter<MeshType>;
   //WriterType::Pointer writer = WriterType::New();
-  //writer->SetFileName(outputImageFileName);
+  //writer->SetFileName(outputMeshFileName);
   //writer->SetInput(filter->GetOutput());
-  //writer->SetUseCompression(true);
 
   filter->Update();
   //ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
