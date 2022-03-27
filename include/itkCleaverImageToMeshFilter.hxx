@@ -36,6 +36,7 @@
 #include "cleaver/InverseField.h"
 #include "cleaver/Cleaver.h"
 #include "cleaver/CleaverMesher.h"
+#include "cleaver/SizingFieldCreator.h"
 
 #include "itkCleaverUtils.h"
 
@@ -121,7 +122,37 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     }
   }
 
+  std::unique_ptr<cleaver::Volume> volume(new cleaver::Volume(fields));
+
+  // Simple interface approximation
+  const bool simple = false;
+  cleaver::CleaverMesher mesher(simple);
+  mesher.setVolume(volume.get());
+  mesher.setAlphaInit(m_Alpha);
+
+  // Other option: cleaver::Constant
+  const cleaver::MeshType elementSizingElement = cleaver::Adaptive;
+  const bool verbose = false;
+
+  std::vector<cleaver::AbstractScalarField *> sizingField;
+  sizingField.push_back(cleaver::SizingFieldCreator::createSizingFieldFromVolume(
+    volume.get(),
+    (float)(1.0 / this->m_Lipschitz),
+    (float)this->m_SamplingRate,
+    (float)this->m_FeatureScaling,
+    (int)this->m_Padding,
+    (elementSizingElement != cleaver::Constant),
+    verbose));
+
+  volume->setSizingField(sizingField[0]);
+
+
   OutputMeshType *      output = this->GetOutput();
+
+  for (auto field: fields)
+  {
+    delete field;
+  }
 }
 
 } // end namespace itk

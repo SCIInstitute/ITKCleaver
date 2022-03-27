@@ -158,7 +158,8 @@ imagesToCleaverFloatFields(std::vector<const TImage *> images, double sigma)
 {
   std::vector<cleaver::AbstractScalarField*> fields;
   size_t num = 0;
-  for (auto image : images) {
+  for (auto image : images) 
+  {
     using ImageType = TImage;
     using FloatImageType = itk::Image<float, ImageType::ImageDimension>;
     using CasterType = itk::CastImageFilter<ImageType, FloatImageType>;
