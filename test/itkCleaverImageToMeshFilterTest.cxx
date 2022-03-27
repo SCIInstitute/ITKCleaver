@@ -20,6 +20,7 @@
 
 #include "itkCommand.h"
 #include "itkImageFileReader.h"
+#include "itkMeshFileWriter.h"
 #include "itkTestingMacros.h"
 #include "itkMesh.h"
 
@@ -91,10 +92,10 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   ShowProgress::Pointer showProgress = ShowProgress::New();
   filter->AddObserver(itk::ProgressEvent(), showProgress);
 
-  //using WriterType = itk::MeshFileWriter<MeshType>;
-  //WriterType::Pointer writer = WriterType::New();
-  //writer->SetFileName(outputMeshFileName);
-  //writer->SetInput(filter->GetOutput());
+  using WriterType = itk::MeshFileWriter<MeshType>;
+  WriterType::Pointer writer = WriterType::New();
+  writer->SetFileName(outputMeshFileName);
+  writer->SetInput(filter->GetOutput());
 
   filter->Update();
   //ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());

@@ -20,18 +20,7 @@
 
 #include "itkCleaverImageToMeshFilter.h"
 
-#include "itkImageRegionIterator.h"
-#include "itkImageRegionConstIterator.h"
-
-#include "itkMinimumMaximumImageCalculator.h"
-#include "itkThresholdImageFilter.h"
-#include "itkCastImageFilter.h"
-#include "itkDiscreteGaussianImageFilter.h"
-#include "itkMultiplyImageFilter.h"
-#include "itkSubtractImageFilter.h"
-#include "itkApproximateSignedDistanceMapImageFilter.h"
-#include <sstream>
-#include <cmath>
+#include "itkTetrahedronCell.h"
 
 #include "cleaver/InverseField.h"
 #include "cleaver/Cleaver.h"
@@ -234,7 +223,46 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     output->SetPoint(ii, point);
   }
 
-  // auto pointsContainer = output->GetPoints();
+  IdentifierType cellId = 0;
+
+  for(size_t ii = 0; ii < mesh->tets.size(); ii++)
+  {
+    const cleaver::Tet* t = mesh->tets.at(ii);
+
+    cleaver::Vertex* v1 = t->verts[0];
+    cleaver::Vertex* v2 = t->verts[1];
+    cleaver::Vertex* v3 = t->verts[2];
+    cleaver::Vertex* v4 = t->verts[3];
+    const size_t i1 = vertMap.find(v1->pos())->second;
+    const size_t i2 = vertMap.find(v2->pos())->second;
+    const size_t i3 = vertMap.find(v3->pos())->second;
+    const size_t i4 = vertMap.find(v4->pos())->second;
+
+    using CellType = typename OutputMeshType::CellType;
+    typename CellType::CellAutoPointer cell;
+    using TetrahedronCellType = TetrahedronCell<CellType>;
+    cell.TakeOwnership(new TetrahedronCellType);
+
+    cell->SetPointId(0, i1);
+    cell->SetPointId(1, i2);
+    cell->SetPointId(2, i3);
+    cell->SetPointId(3, i4);
+
+    output->SetCell(cellId, cell);
+    cellId++;
+  }
+
+  using CellDataContainerType = typename OutputMeshType::CellDataContainer;
+  auto outputCellData = CellDataContainerType::New();
+  outputCellData->Reserve(mesh->tets.size());
+  for(size_t ii = 0; ii < mesh->tets.size(); ii++)
+  {
+    cleaver::Tet* t = mesh->tets.at(ii);
+    outputCellData->SetElement(ii, t->mat_label);
+  }
+  output->SetCellData(outputCellData);
+
+  // using TriangleCellType = itk::TriangleCell<CellInterfaceType>;
 
   for (auto field: fields)
   {

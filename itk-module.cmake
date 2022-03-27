@@ -17,6 +17,7 @@ itk_module(Cleaver
   TEST_DEPENDS
     ITKTestKernel
     ITKIONRRD
+    ITKIOMeshBase
   DESCRIPTION
     "${DOCUMENTATION}"
   EXCLUDE_FROM_DEFAULT

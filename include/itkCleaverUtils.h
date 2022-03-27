@@ -20,6 +20,17 @@
 
 #include "cleaver/Cleaver.h"
 
+#include "itkImageRegionIterator.h"
+#include "itkImageRegionConstIterator.h"
+#include "itkImage.h"
+#include "itkMinimumMaximumImageCalculator.h"
+#include "itkThresholdImageFilter.h"
+#include "itkCastImageFilter.h"
+#include "itkDiscreteGaussianImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+#include "itkSubtractImageFilter.h"
+#include "itkApproximateSignedDistanceMapImageFilter.h"
+
 namespace itk
 {
 
