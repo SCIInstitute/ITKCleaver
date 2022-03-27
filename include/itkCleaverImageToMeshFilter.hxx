@@ -146,6 +146,17 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 
   volume->setSizingField(sizingField[0]);
 
+  mesher.setConstant(false);
+  cleaver::TetMesh * bgMesh = mesher.createBackgroundMesh(verbose);
+
+  // Apply Mesh Cleaving
+  mesher.buildAdjacency(verbose);
+  mesher.sampleVolume(verbose);
+  mesher.computeAlphas(verbose);
+  mesher.computeInterfaces(verbose);
+  mesher.generalizeTets(verbose);
+  mesher.snapsAndWarp(verbose);
+  mesher.stencilTets(verbose);
 
   OutputMeshType *      output = this->GetOutput();
 
