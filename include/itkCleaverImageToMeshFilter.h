@@ -66,6 +66,10 @@ public:
   itkGetConstReferenceMacro(InputIsIndicatorFunction, bool);
   itkBooleanMacro(InputIsIndicatorFunction);
 
+  /** Blending function sigma for input(s) to remove alias artifacts. */
+  itkSetMacro(Sigma, double);
+  itkGetConstMacro(Sigma, double);
+
   /** Sizing field sampling rate. The sampling rate of the input indicator functions or calculated indicator functions from segmentation files.
    * The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes.
    * Adjusting this parameter will also affect Cleaver’s runtime, with smaller values running faster. */
@@ -86,21 +90,8 @@ public:
   itkSetMacro(Padding, int);
   itkGetConstMacro(Padding, int);
 
-
   itkSetMacro(Alpha, double);
   itkGetConstMacro(Alpha, double);
-
-  itkSetMacro(AlphaLong, double);
-  itkGetConstMacro(AlphaLong, double);
-
-  itkSetMacro(AlphaShort, double);
-  itkGetConstMacro(AlphaShort, double);
-
-  itkSetMacro(MaxIterations, int);
-  itkGetConstMacro(MaxIterations, int);
-
-  itkSetMacro(Sigma, double);
-  itkGetConstMacro(Sigma, double);
 
 protected:
   CleaverImageToMeshFilter();
@@ -115,13 +106,10 @@ protected:
 private:
   bool m_InputIsIndicatorFunction{false};
   double m_Alpha{0.4};
-  double m_AlphaLong{0.357};
-  double m_AlphaShort{0.203};
   double m_SamplingRate{1.0};
   double m_Lipschitz{0.2};
   double m_FeatureScaling{1.0};
   int m_Padding{0};
-  int m_MaxIterations{1000};
   double m_Sigma{1.0};
 };
 } // namespace itk

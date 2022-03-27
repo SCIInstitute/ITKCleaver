@@ -158,6 +158,19 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   mesher.snapsAndWarp(verbose);
   mesher.stencilTets(verbose);
 
+  cleaver::TetMesh *mesh = mesher.getTetMesh();
+
+  // Strip Exterior Tets
+  cleaver::stripExteriorTets(mesh, volume.get(), verbose);
+
+  // Fix jacobians if requested.
+  mesh->fixVertexWindup(verbose);
+
+  // Compute Quality If Havn't Already
+  mesh->computeAngles();
+  // std::cout << "Min Dihedral: " << mesh->min_angle << std::endl;
+  // std::cout << "Max Dihedral: " << mesh->max_angle << std::endl;
+
   OutputMeshType *      output = this->GetOutput();
 
   for (auto field: fields)
