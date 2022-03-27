@@ -66,6 +66,27 @@ public:
   itkGetConstReferenceMacro(InputIsIndicatorFunction, bool);
   itkBooleanMacro(InputIsIndicatorFunction);
 
+  /** Sizing field sampling rate. The sampling rate of the input indicator functions or calculated indicator functions from segmentation files.
+   * The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes.
+   * Adjusting this parameter will also affect Cleaver’s runtime, with smaller values running faster. */
+  itkSetMacro(SamplingRate, double);
+  itkGetConstMacro(SamplingRate, double);
+
+  /** Sizing field rate of change. the maximum rate of change of element size throughout a mesh.
+   * Helpful for meshes with high and low curvature.
+   * Will have no effect on meshes with constant element sizing methods. */
+  itkSetMacro(Lipschitz, double);
+  itkGetConstMacro(Lipschitz, double);
+
+  /** Sizing field feature scaling. Scales features of the mesh effecting element size. Higher feature scaling creates coaser meshes. */
+  itkSetMacro(FeatureScaling, double);
+  itkGetConstMacro(FeatureScaling, double);
+
+  /** Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary. */ 
+  itkSetMacro(Padding, int);
+  itkGetConstMacro(Padding, int);
+
+
   itkSetMacro(Alpha, double);
   itkGetConstMacro(Alpha, double);
 
@@ -74,18 +95,6 @@ public:
 
   itkSetMacro(AlphaShort, double);
   itkGetConstMacro(AlphaShort, double);
-
-  itkSetMacro(SamplingRate, double);
-  itkGetConstMacro(SamplingRate, double);
-
-  itkSetMacro(Lipschitz, double);
-  itkGetConstMacro(Lipschitz, double);
-
-  itkSetMacro(FeatureScaling, double);
-  itkGetConstMacro(FeatureScaling, double);
-
-  itkSetMacro(Padding, int);
-  itkGetConstMacro(Padding, int);
 
   itkSetMacro(MaxIterations, int);
   itkGetConstMacro(MaxIterations, int);
