@@ -49,7 +49,7 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   Superclass::PrintSelf(os, indent);
 
   os << indent << "InputIsIndicatorFunction: ";
-  this->m_InputIsIndicatorFunction ? "true" : "false";
+  os << this->m_InputIsIndicatorFunction ? "true" : "false";
   os << std::endl;
   os << indent << "SamplingRate: " << this->m_SamplingRate << std::endl;
   os << indent << "Lipschitz: " << this->m_Lipschitz << std::endl;
