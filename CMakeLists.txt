@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(Cleaver)
 
+set(CMAKE_CXX_STANDARD 17)
+
+set(Cleaver_LIBRARIES cleaver)
+
 include(FetchContent)
 set(_itk_build_testing ${BUILD_TESTING})
 #set(BUILD_TESTING OFF)
@@ -24,6 +28,8 @@ endif()
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Cleaver2/src)
 set(BUILD_TESTING ${_itk_build_testing})
 set(BUILD_SHARED_LIBS ${_itk_build_shared})
+
+include_directories(${cleaver_lib_SOURCE_DIR}/src/lib)
 
 if(NOT ITK_SOURCE_DIR)
   find_package(ITK REQUIRED)

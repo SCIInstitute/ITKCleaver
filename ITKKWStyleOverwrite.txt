@@ -1,0 +1,2 @@
+itkCleaverImageToMeshFilter\.hxx Namespace Disable
+itkCleaverImageToMeshFilterTest\.cxx Namespace Disable

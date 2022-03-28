@@ -59,32 +59,41 @@ public:
   /** Standard New macro. */
   itkNewMacro(Self);
 
-  itkSetMacro(Alpha, double);
-  itkGetConstMacro(Alpha, double);
+  /** Is the input image a label image or an indicator function? This is only used if
+   * there is only one input. Otherwise, indicator functions are assumed.
+   */
+  itkSetMacro(InputIsIndicatorFunction, bool);
+  itkGetConstReferenceMacro(InputIsIndicatorFunction, bool);
+  itkBooleanMacro(InputIsIndicatorFunction);
 
-  itkSetMacro(AlphaLong, double);
-  itkGetConstMacro(AlphaLong, double);
+  /** Blending function sigma for input(s) to remove alias artifacts. */
+  itkSetMacro(Sigma, double);
+  itkGetConstMacro(Sigma, double);
 
-  itkSetMacro(AlphaShort, double);
-  itkGetConstMacro(AlphaShort, double);
-
+  /** Sizing field sampling rate. The sampling rate of the input indicator functions or calculated indicator functions from segmentation files.
+   * The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes.
+   * Adjusting this parameter will also affect Cleaver’s runtime, with smaller values running faster. */
   itkSetMacro(SamplingRate, double);
   itkGetConstMacro(SamplingRate, double);
 
+  /** Sizing field rate of change. the maximum rate of change of element size throughout a mesh.
+   * Helpful for meshes with high and low curvature.
+   * Will have no effect on meshes with constant element sizing methods. */
   itkSetMacro(Lipschitz, double);
   itkGetConstMacro(Lipschitz, double);
 
+  /** Sizing field feature scaling. Scales features of the mesh effecting element size. Higher feature scaling creates coaser meshes. */
   itkSetMacro(FeatureScaling, double);
   itkGetConstMacro(FeatureScaling, double);
 
+  /** Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary. */ 
   itkSetMacro(Padding, int);
   itkGetConstMacro(Padding, int);
 
-  itkSetMacro(MaxIterations, int);
-  itkGetConstMacro(MaxIterations, int);
+  itkSetMacro(Alpha, double);
+  itkGetConstMacro(Alpha, double);
 
-  itkSetMacro(Sigma, double);
-  itkGetConstMacro(Sigma, double);
+  using Superclass::Superclass::GetOutput;
 
 protected:
   CleaverImageToMeshFilter();
@@ -97,14 +106,12 @@ protected:
   void GenerateData() override;
 
 private:
+  bool m_InputIsIndicatorFunction{false};
   double m_Alpha{0.4};
-  double m_AlphaLong{0.357};
-  double m_AlphaShort{0.203};
   double m_SamplingRate{1.0};
   double m_Lipschitz{0.2};
   double m_FeatureScaling{1.0};
   int m_Padding{0};
-  int m_MaxIterations{1000};
   double m_Sigma{1.0};
 };
 } // namespace itk
