@@ -93,6 +93,8 @@ public:
   itkSetMacro(Alpha, double);
   itkGetConstMacro(Alpha, double);
 
+  using Superclass::Superclass::GetOutput;
+
 protected:
   CleaverImageToMeshFilter();
   ~CleaverImageToMeshFilter() override = default;

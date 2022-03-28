@@ -92,14 +92,20 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   ShowProgress::Pointer showProgress = ShowProgress::New();
   filter->AddObserver(itk::ProgressEvent(), showProgress);
 
+  filter->Update();
+
+  std::cout << "\nTetrahedral mesh output: " << std::endl;
+  filter->GetOutput(0)->Print(std::cout);
+
+  std::cout << "\nTriangle mesh output: " << std::endl;
+  filter->GetOutput(1)->Print(std::cout);
+
   using WriterType = itk::MeshFileWriter<MeshType>;
   WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(outputMeshFileName);
-  writer->SetInput(filter->GetOutput());
+  writer->SetInput(filter->GetOutput(1));
 
-  filter->Update();
-  //ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
-
+  ITK_TRY_EXPECT_NO_EXCEPTION(writer->Update());
 
   std::cout << "Test finished." << std::endl;
   return EXIT_SUCCESS;

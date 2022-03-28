@@ -20,14 +20,266 @@
 
 #include "itkCleaverImageToMeshFilter.h"
 
+#include "itkImageRegionIterator.h"
+#include "itkImageRegionConstIterator.h"
+#include "itkImage.h"
+#include "itkMinimumMaximumImageCalculator.h"
+#include "itkThresholdImageFilter.h"
+#include "itkCastImageFilter.h"
+#include "itkDiscreteGaussianImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+#include "itkSubtractImageFilter.h"
+#include "itkApproximateSignedDistanceMapImageFilter.h"
+
 #include "itkTetrahedronCell.h"
+#include "itkTriangleCell.h"
 
 #include "cleaver/InverseField.h"
 #include "cleaver/Cleaver.h"
 #include "cleaver/CleaverMesher.h"
 #include "cleaver/SizingFieldCreator.h"
 
-#include "itkCleaverUtils.h"
+#include <sstream>
+#include <cmath>
+
+namespace
+{
+
+template<typename TImage>
+bool checkImageSize(TImage * inputImg, double sigma)
+{
+  auto dims = inputImg->GetLargestPossibleRegion().GetSize();
+  auto spacing = inputImg->GetSpacing();
+  std::vector<double> imageSize{ dims[0] * spacing[0], dims[1] * spacing[1], dims[2] * spacing[2] };
+  double imageSizeMin = *(std::min_element(std::begin(imageSize), std::end(imageSize)));
+
+  return (sigma / imageSizeMin) >= 0.1;
+}
+
+template<typename TImage>
+std::vector<cleaver::AbstractScalarField*>
+segmentationToIndicatorFunctions(const TImage * image, double sigma) {
+  using ImageType = TImage;
+  using FloatImageType = itk::Image<float, ImageType::ImageDimension>;
+  using CasterType = itk::CastImageFilter<ImageType, FloatImageType>;
+
+  auto caster = CasterType::New();
+  caster->SetInput(image);
+  caster->Update();
+  
+  //determine the number of labels in the segmentations
+  using ImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<FloatImageType>;
+  auto imageCalculatorFilter
+    = ImageCalculatorFilterType::New();
+  imageCalculatorFilter->SetImage(caster->GetOutput());
+  imageCalculatorFilter->Compute();
+  auto maxLabel = static_cast<size_t>(imageCalculatorFilter->GetMaximum());
+  auto minLabel = static_cast<size_t>(imageCalculatorFilter->GetMinimum());
+  std::vector<cleaver::AbstractScalarField*> fields;
+
+  // extract images from each label for an indicator function
+  for (size_t i = minLabel, num = 0; i <= maxLabel; i++, num++) {
+    // Pull out this label
+    using ThreshType = itk::ThresholdImageFilter<FloatImageType>;
+    auto thresh = ThreshType::New();
+    thresh->SetInput(caster->GetOutput());
+    thresh->SetOutsideValue(0);
+    thresh->ThresholdOutside(static_cast<double>(i) - 0.001,
+      static_cast<double>(i) + 0.001);
+    thresh->Update();
+
+    // Change the values to be from 0 to 1.
+    using MultiplyImageFilterType = itk::MultiplyImageFilter<FloatImageType, FloatImageType, FloatImageType>;
+    auto multiplyImageFilter =
+      MultiplyImageFilterType::New();
+    multiplyImageFilter->SetInput(thresh->GetOutput());
+    multiplyImageFilter->SetConstant(1. / static_cast<double>(i));
+    multiplyImageFilter->Update();
+
+    auto inputImg = multiplyImageFilter->GetOutput();
+    bool warning = checkImageSize(inputImg, sigma);
+
+    // Do some blurring.
+    using GaussianBlurType = itk::DiscreteGaussianImageFilter<FloatImageType, FloatImageType>;
+    auto blur = GaussianBlurType::New();
+    blur->SetInput(multiplyImageFilter->GetOutput());
+    blur->SetVariance(sigma * sigma);
+    blur->Update();
+
+    //find the average value between
+    auto calc =
+      ImageCalculatorFilterType::New();
+    calc->SetImage(blur->GetOutput());
+    calc->Compute();
+    float mx = calc->GetMaximum();
+    float mn = calc->GetMinimum();
+    auto md = (mx + mn) / 2.f;
+
+    //create a distance map with that minimum value as the levelset
+    using DMapType = itk::ApproximateSignedDistanceMapImageFilter<FloatImageType, FloatImageType>;
+    auto dm = DMapType::New();
+    dm->SetInput(blur->GetOutput());
+    dm->SetInsideValue(md + 0.1f);
+    dm->SetOutsideValue(md -0.1f);
+    dm->Update();
+
+    // Convert the image to a cleaver "abstract field".
+    auto img = dm->GetOutput();
+    auto region = img->GetLargestPossibleRegion();
+    auto numPixel = region.GetNumberOfPixels();
+    float *data = new float[numPixel];
+    auto x = region.GetSize()[0], y = region.GetSize()[1], z = region.GetSize()[2];
+    fields.push_back(new cleaver::FloatField(data, x, y, z));
+    std::string name("SegmentationLabel");
+    std::stringstream ss;
+    ss << name << i;
+    fields[num]->setName(ss.str());
+    fields[num]->setWarning(warning);
+    itk::ImageRegionConstIterator<FloatImageType> imageIterator(img, region);
+    size_t pixel = 0;
+    float min = static_cast<float>(imageIterator.Get());
+    float max = static_cast<float>(imageIterator.Get());
+    auto spacing = img->GetSpacing();
+    std::string error = "none";
+    while (!imageIterator.IsAtEnd()) {
+      // Get the value of the current pixel.
+      float val = static_cast<float>(imageIterator.Get());
+      ((cleaver::FloatField*)fields[num])->data()[pixel++] = -val;
+      ++imageIterator;
+
+      //Error checking
+      if (std::isnan(val) && error.compare("none") == 0)
+      {
+        error = "nan";
+      }
+      else if (val < min)
+      {
+        min = val;
+      }
+      else if (val > max)
+      {
+        max = val;
+      }
+    }
+
+    if ((min >= 0 || max <= 0) && (error.compare("none") == 0))
+    {
+      error = "maxmin";
+    }
+
+    fields[num]->setError(error);
+    ((cleaver::FloatField*)fields[num])->setScale(
+      cleaver::vec3(spacing[0], spacing[1], spacing[2]));
+  }
+  return fields;
+}
+
+template<typename TImage>
+std::vector<cleaver::AbstractScalarField*>
+imagesToCleaverFloatFields(std::vector<const TImage *> images, double sigma)
+{
+  std::vector<cleaver::AbstractScalarField*> fields;
+  size_t num = 0;
+  for (auto image : images) 
+  {
+    using ImageType = TImage;
+    using FloatImageType = itk::Image<float, ImageType::ImageDimension>;
+    using CasterType = itk::CastImageFilter<ImageType, FloatImageType>;
+
+    auto caster = CasterType::New();
+    caster->SetInput(image);
+    caster->Update();
+
+    //Checking sigma vs the size of the image
+    auto inputImg = caster->GetOutput();
+    bool warning = checkImageSize(inputImg, sigma);
+
+    //do some blurring
+    using GaussianBlurType = itk::DiscreteGaussianImageFilter<FloatImageType, FloatImageType>;
+    auto blur = GaussianBlurType::New();
+    blur->SetInput(caster->GetOutput());
+    blur->SetVariance(sigma * sigma);
+    blur->Update();
+    auto img = blur->GetOutput();
+    //convert the image to a cleaver "abstract field"
+    auto region = img->GetLargestPossibleRegion();
+    auto numPixel = region.GetNumberOfPixels();
+    float *data = new float[numPixel];
+    auto x = region.GetSize()[0], y = region.GetSize()[1], z = region.GetSize()[2];
+    fields.push_back(new cleaver::FloatField(data, x, y, z));
+    std::string name("SegmentationLabel");
+    fields[num]->setName(name);
+    fields[num]->setWarning(warning);
+    itk::ImageRegionConstIterator<FloatImageType> imageIterator(img, region);
+    size_t pixel = 0;
+    auto spacing = img->GetSpacing();
+    float min = static_cast<float>(imageIterator.Get());
+    float max = static_cast<float>(imageIterator.Get());
+    std::string error = "none";
+    while (!imageIterator.IsAtEnd()) {
+      // Get the value of the current pixel
+      float val = static_cast<float>(imageIterator.Get());
+      ((cleaver::FloatField*)fields[num])->data()[pixel++] = val;
+      ++imageIterator;
+
+      //Error checking
+      if (std::isnan(val) && error.compare("none") == 0)
+      {
+        error = "nan";
+      }
+      else if (val < min)
+      {
+        min = val;
+      }
+      else if (val > max)
+      {
+        max = val;
+      }
+    }
+
+    if ((min >= 0 || max <= 0) && (error.compare("none") == 0))
+    {
+      error = "maxmin";
+    }
+
+    fields[num]->setError(error);
+    ((cleaver::FloatField*)fields[num])->setScale(cleaver::vec3(spacing[0], spacing[1], spacing[2]));
+    num++;
+  }
+  return fields;
+}
+
+template<typename TImage>
+void
+cleaverFloatFieldToImage(const cleaver::FloatField *field, TImage * image)
+{
+  using ImageType = TImage;
+  auto dims = field->dataBounds().size;
+  typename ImageType::IndexType start;
+  start.Fill(0);
+  typename ImageType::SizeType size;
+  size[0] = static_cast<size_t>(dims[0]);
+  size[1] = static_cast<size_t>(dims[1]);
+  size[2] = static_cast<size_t>(dims[2]);
+  typename ImageType::RegionType region(start, size);
+  image->SetRegions(region);
+  image->Allocate();
+  image->FillBuffer(0);
+  auto data = ((cleaver::FloatField*)field)->data();
+  for (size_t i = 0; i < dims[0]; i++) {
+    for (size_t j = 0; j < dims[1]; j++) {
+      for (size_t k = 0; k < dims[2]; k++) {
+        typename ImageType::IndexType pixelIndex;
+        pixelIndex[0] = i;
+        pixelIndex[1] = j;
+        pixelIndex[2] = k;
+        image->SetPixel(pixelIndex, static_cast<typename ImageType::PixelType>(data[i + size[0] * j + size[0] * size[1] * k]));
+      }
+    }
+  }
+}
+
+} // end anonymous namespace
 
 namespace itk
 {
@@ -36,8 +288,11 @@ template <typename TInputImage, typename TOutputMesh>
 CleaverImageToMeshFilter<TInputImage, TOutputMesh>
 ::CleaverImageToMeshFilter()
 {
-  this->SetNumberOfRequiredInputs(1);
-  this->SetNumberOfRequiredOutputs(1);
+  this->ProcessObject::SetNumberOfRequiredInputs(1);
+  this->ProcessObject::SetNumberOfRequiredOutputs(2);
+
+  typename OutputMeshType::Pointer output = dynamic_cast<OutputMeshType *>(this->MakeOutput(1).GetPointer());
+  this->ProcessObject::SetNthOutput(1, output.GetPointer());
 }
 
 
@@ -55,6 +310,7 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   os << indent << "Lipschitz: " << this->m_Lipschitz << std::endl;
   os << indent << "FeatureScaling: " << this->m_FeatureScaling << std::endl;
   os << indent << "Padding: " << this->m_Padding << std::endl;
+  os << indent << "Alpha: " << this->m_Alpha << std::endl;
 }
 
 
@@ -155,8 +411,10 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   // Fix jacobians if requested.
   mesh->fixVertexWindup(verbose);
 
+  // mesh->writePly("/tmp/out.ply");
+
   // Compute Quality If Havn't Already
-  mesh->computeAngles();
+  // mesh->computeAngles();
   // std::cout << "Min Dihedral: " << mesh->min_angle << std::endl;
   // std::cout << "Max Dihedral: " << mesh->max_angle << std::endl;
 
@@ -213,18 +471,21 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     }
   }
 
-  OutputMeshType * output = this->GetOutput(); 
+  OutputMeshType * tetOutput = this->GetOutput(0); 
+  using CellType = typename OutputMeshType::CellType;
+
   for (size_t ii = 0; ii < prunedVerts.size(); ii++)
   {
     typename OutputMeshType::PointType point;
     point[0] = prunedVerts[ii].x;
     point[1] = prunedVerts[ii].y;
     point[2] = prunedVerts[ii].z;
-    output->SetPoint(ii, point);
+    tetOutput->SetPoint(ii, point);
   }
 
-  IdentifierType cellId = 0;
-
+  using CellDataContainerType = typename OutputMeshType::CellDataContainer;
+  auto outputCellData = CellDataContainerType::New();
+  outputCellData->Reserve(mesh->tets.size());
   for(size_t ii = 0; ii < mesh->tets.size(); ii++)
   {
     const cleaver::Tet* t = mesh->tets.at(ii);
@@ -238,7 +499,6 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     const size_t i3 = vertMap.find(v3->pos())->second;
     const size_t i4 = vertMap.find(v4->pos())->second;
 
-    using CellType = typename OutputMeshType::CellType;
     typename CellType::CellAutoPointer cell;
     using TetrahedronCellType = TetrahedronCell<CellType>;
     cell.TakeOwnership(new TetrahedronCellType);
@@ -248,21 +508,124 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     cell->SetPointId(2, i3);
     cell->SetPointId(3, i4);
 
-    output->SetCell(cellId, cell);
-    cellId++;
-  }
+    tetOutput->SetCell(ii, cell);
 
-  using CellDataContainerType = typename OutputMeshType::CellDataContainer;
-  auto outputCellData = CellDataContainerType::New();
-  outputCellData->Reserve(mesh->tets.size());
-  for(size_t ii = 0; ii < mesh->tets.size(); ii++)
-  {
-    cleaver::Tet* t = mesh->tets.at(ii);
     outputCellData->SetElement(ii, t->mat_label);
   }
-  output->SetCellData(outputCellData);
+  tetOutput->SetCellData(outputCellData);
 
-  // using TriangleCellType = itk::TriangleCell<CellInterfaceType>;
+
+  OutputMeshType * triangleOutput = this->GetOutput(1); 
+
+  std::vector<size_t> interfaces;
+  std::vector<size_t> triangleCellData;
+  std::vector<size_t> keys;
+
+  // determine output faces and vertices vertex counts
+  for(size_t f = 0; f < mesh->faces.size(); f++)
+  {
+    const int t1Index = static_cast<int>(mesh->faces[f]->tets[0]);
+    const int t2Index = static_cast<int>(mesh->faces[f]->tets[1]);
+
+    if(t1Index < 0 || t2Index < 0){
+      continue;
+    }
+
+    const cleaver::Tet *t1 = mesh->tets[t1Index];
+    const cleaver::Tet *t2 = mesh->tets[t2Index];
+
+    if(t1->mat_label != t2->mat_label)
+    {
+      interfaces.push_back(f);
+
+      const int triangleCellDataKey = (1 << (int)t1->mat_label) + (1 << (int)t2->mat_label);
+      int cellDataId = -1;
+      for(size_t k = 0; k < keys.size(); k++)
+      {
+        if(keys[k] == triangleCellDataKey)
+        {
+          cellDataId = static_cast<int>(k);
+          break;
+        }
+      }
+      if(cellDataId == -1)
+      {
+        keys.push_back(triangleCellDataKey);
+        cellDataId = static_cast<int>(keys.size() - 1);
+      }
+
+      triangleCellData.push_back(cellDataId);
+    }
+  }
+
+  //         Create Pruned Vertex List
+  VertMap triangleVertMap;
+  std::vector<cleaver::vec3> trianglePrunedVerts;
+  prunedPos = 0;
+  for(size_t f = 0; f < interfaces.size(); f++)
+  {
+    cleaver::Face *face = mesh->faces[interfaces[f]];
+
+    cleaver::Vertex *v1 = mesh->verts[face->verts[0]];
+    cleaver::Vertex *v2 = mesh->verts[face->verts[1]];
+    cleaver::Vertex *v3 = mesh->verts[face->verts[2]];
+
+    cleaver::vec3 p1 = v1->pos();
+    cleaver::vec3 p2 = v2->pos();
+    cleaver::vec3 p3 = v3->pos();
+
+    if (!triangleVertMap.count(p1)) {
+      triangleVertMap.insert(std::pair<cleaver::vec3,size_t>(p1,prunedPos));
+      prunedPos++;
+      trianglePrunedVerts.push_back(p1);
+    }
+    if (!triangleVertMap.count(p2)) {
+      triangleVertMap.insert(std::pair<cleaver::vec3,size_t>(p2,prunedPos));
+      prunedPos++;
+      trianglePrunedVerts.push_back(p2);
+    }
+    if (!triangleVertMap.count(p3)) {
+      triangleVertMap.insert(std::pair<cleaver::vec3,size_t>(p3,prunedPos));
+      prunedPos++;
+      trianglePrunedVerts.push_back(p3);
+    }
+  }
+
+  for (size_t ii = 0; ii < trianglePrunedVerts.size(); ii++)
+    {
+      typename OutputMeshType::PointType point;
+      point[0] = trianglePrunedVerts[ii].x;
+      point[1] = trianglePrunedVerts[ii].y;
+      point[2] = trianglePrunedVerts[ii].z;
+      triangleOutput->SetPoint(ii, point);
+    }
+
+  auto triangleOutputCellData = CellDataContainerType::New();
+  triangleOutputCellData->Reserve(interfaces.size());
+  for(size_t f = 0; f < interfaces.size(); f++)
+  {
+    cleaver::Face *face = mesh->faces[interfaces[f]];
+
+    cleaver::Vertex *v1 = mesh->verts[face->verts[0]];
+    cleaver::Vertex *v2 = mesh->verts[face->verts[1]];
+    cleaver::Vertex *v3 = mesh->verts[face->verts[2]];
+    size_t i1 = triangleVertMap.find(v1->pos())->second;
+    size_t i2 = triangleVertMap.find(v2->pos())->second;
+    size_t i3 = triangleVertMap.find(v3->pos())->second;
+
+    typename CellType::CellAutoPointer cell;
+    using TriangleCellType = TriangleCell<CellType>;
+    cell.TakeOwnership(new TriangleCellType);
+
+    cell->SetPointId(0, i1);
+    cell->SetPointId(1, i2);
+    cell->SetPointId(2, i3);
+
+    triangleOutput->SetCell(f, cell);
+
+    triangleOutputCellData->SetElement(f, triangleCellData[f]);
+  }
+  triangleOutput->SetCellData(triangleOutputCellData);
 
   for (auto field: fields)
   {
