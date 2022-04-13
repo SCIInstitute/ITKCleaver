@@ -19,7 +19,7 @@ ITK module wrapping Cleaver functionalities used for MultiMaterial Tetrahedral M
 
 `Cleaver <https://github.com/SCIInstitute/Cleaver2/releases>`_ is a free multimaterial tetrahedral meshing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.
 
-Acknowledgements
-----------------
+Acknowledgments
+---------------
 
 This software was developed in part by the Center for Integrative Biomedical Computing (CIBC) and the `Scientific Computing and Imaging (SCI) Institute <https://www.sci.utah.edu/cibc>`_ and `Kitware <https://www.kitware.com>`_.  Support came from the National Institute of General Medical Sciences of the National Institutes of Health under grant numbers P41 GM103545 and R24 GM136986.
