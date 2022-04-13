@@ -8,7 +8,7 @@ ITKCleaver
     :target: https://pypi.python.org/pypi/itk-cleaver
     :alt: PyPI Version
 
-.. image:: https://img.shields.io/badge/License-Apache%202.0-blue.svg
+.. image:: https://img.shields.io/github/license/SCIInstitute/ITKCleaver?color=blue
     :target: https://github.com/SCIInstitute/ITKCleaver/blob/master/LICENSE
     :alt: License
 
