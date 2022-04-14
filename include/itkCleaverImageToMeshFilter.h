@@ -53,6 +53,8 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
+  using DataObjectPointerArraySizeType = typename Superclass::Superclass::DataObjectPointerArraySizeType;
+
   /** Run-time type information. */
   itkTypeMacro(CleaverImageToMeshFilter, ImageToMeshFilter);
 
@@ -86,14 +88,19 @@ public:
   itkSetMacro(FeatureScaling, double);
   itkGetConstMacro(FeatureScaling, double);
 
-  /** Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary. */ 
+  /** Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary. */
   itkSetMacro(Padding, int);
   itkGetConstMacro(Padding, int);
 
   itkSetMacro(Alpha, double);
   itkGetConstMacro(Alpha, double);
 
-  using Superclass::Superclass::GetOutput;
+  /** Get the outptu meshes. Output 0 is the tetrahedral mesh. Output 1 is the
+   * interface triangle mesh. */
+  OutputMeshType *
+  GetOutput(DataObjectPointerArraySizeType index);
+  const OutputMeshType *
+  GetOutput(DataObjectPointerArraySizeType index) const;
 
 protected:
   CleaverImageToMeshFilter();
