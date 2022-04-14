@@ -66,7 +66,7 @@ segmentationToIndicatorFunctions(const TImage * image, double sigma) {
   auto caster = CasterType::New();
   caster->SetInput(image);
   caster->Update();
-  
+
   //determine the number of labels in the segmentations
   using ImageCalculatorFilterType = itk::MinimumMaximumImageCalculator<FloatImageType>;
   auto imageCalculatorFilter
@@ -180,7 +180,7 @@ imagesToCleaverFloatFields(std::vector<const TImage *> images, double sigma)
 {
   std::vector<cleaver::AbstractScalarField*> fields;
   size_t num = 0;
-  for (auto image : images) 
+  for (auto image : images)
   {
     using ImageType = TImage;
     using FloatImageType = itk::Image<float, ImageType::ImageDimension>;
@@ -320,6 +320,22 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   os << indent << "Alpha: " << this->m_Alpha << std::endl;
 }
 
+
+template <typename TInputImage, typename TOutputMesh>
+auto
+CleaverImageToMeshFilter<TInputImage, TOutputMesh>
+::GetOutput(DataObjectPointerArraySizeType index) -> OutputMeshType *
+{
+  return static_cast<OutputMeshType *>(this->ProcessObject::GetOutput(index));
+}
+
+template <typename TInputImage, typename TOutputMesh>
+auto
+CleaverImageToMeshFilter<TInputImage, TOutputMesh>
+::GetOutput(DataObjectPointerArraySizeType index) const -> const OutputMeshType *
+{
+  return static_cast<const OutputMeshType *>(this->ProcessObject::GetOutput(index));
+}
 
 template <typename TInputImage, typename TOutputMesh>
 void
@@ -482,7 +498,7 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
     }
   }
 
-  OutputMeshType * tetOutput = this->GetOutput(0); 
+  OutputMeshType * tetOutput = this->GetOutput(0);
   using CellType = typename OutputMeshType::CellType;
 
   for (size_t ii = 0; ii < prunedVerts.size(); ii++)
@@ -526,7 +542,7 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   tetOutput->SetCellData(outputCellData);
 
 
-  OutputMeshType * triangleOutput = this->GetOutput(1); 
+  OutputMeshType * triangleOutput = this->GetOutput(1);
 
   std::vector<size_t> interfaces;
   std::vector<size_t> triangleCellData;
