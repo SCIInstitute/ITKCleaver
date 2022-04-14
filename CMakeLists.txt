@@ -3,8 +3,6 @@ project(Cleaver)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(Cleaver_LIBRARIES cleaver)
-
 include(FetchContent)
 set(_itk_build_testing ${BUILD_TESTING})
 #set(BUILD_TESTING OFF)
@@ -29,7 +27,11 @@ endif()
 set(BUILD_TESTING ${_itk_build_testing})
 set(BUILD_SHARED_LIBS ${_itk_build_shared})
 
-include_directories(${cleaver_lib_SOURCE_DIR}/src/lib)
+set(Cleaver_LIBRARIES cleaver)
+set(Cleaver_INCLUDE_DIRS
+  ${Cleaver_SOURCE_DIR}/include
+  ${cleaver_lib_SOURCE_DIR}/src/lib
+  )
 
 if(NOT ITK_SOURCE_DIR)
   find_package(ITK REQUIRED)
@@ -39,3 +41,5 @@ else()
   set(ITK_DIR ${CMAKE_BINARY_DIR})
   itk_module_impl()
 endif()
+
+itk_module_target(cleaver NO_INSTALL)
