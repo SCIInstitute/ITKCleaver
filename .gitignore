@@ -33,3 +33,5 @@
 
 # Cleaver Repository
 Cleaver2
+examples/.ipynb_checkpoints/
+examples/triangle_mesh.vtk
