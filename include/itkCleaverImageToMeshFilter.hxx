@@ -413,7 +413,11 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   cleaver::TetMesh *mesh = mesher.getTetMesh();
 
   // Strip Exterior Tets
-  cleaver::stripExteriorTets(mesh, volume.get(), verbose);
+  const bool stripExterior = false;
+  if (stripExterior)
+  {
+    cleaver::stripExteriorTets(mesh, volume.get(), verbose);
+  }
 
   // Fix jacobians if requested.
   mesh->fixVertexWindup(verbose);
