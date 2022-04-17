@@ -101,6 +101,7 @@ jobs:
           # macOS Azure VM Warning
           "ld: warning: text-based stub file"
           "libcleaver.a.*has no symbols"
+          "libitkcleaver.*has no symbols"
           )
         set(dashboard_no_clean 1)
         set(ENV{CC} ${{ matrix.c-compiler }})
