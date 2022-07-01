@@ -12,6 +12,9 @@ ITKCleaver
     :target: https://github.com/SCIInstitute/ITKCleaver/blob/master/LICENSE
     :alt: License
 
+.. image:: https://zenodo.org/badge/343586698.svg
+   :target: https://zenodo.org/badge/latestdoi/343586698
+
 Overview
 --------
 
