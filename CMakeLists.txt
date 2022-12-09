@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.10.2)
+cmake_minimum_required(VERSION 3.16.3)
 project(Cleaver)
 
 set(CMAKE_CXX_STANDARD 17)
+
+# CMake option standard variable override
+if(POLICY CMP0077)
+  cmake_policy(SET CMP0077 NEW)
+endif()
 
 include(FetchContent)
 set(_itk_build_testing ${BUILD_TESTING})

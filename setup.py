@@ -12,7 +12,7 @@ except ImportError:
 
 setup(
     name='itk-cleaver',
-    version='1.2.0',
+    version='1.3.0',
     author='SCI Institute',
     author_email='itk+community@discourse.itk.org',
     packages=['itk'],
@@ -43,6 +43,6 @@ setup(
     keywords='ITK InsightToolkit',
     url=r'https://itk.org/',
     install_requires=[
-        r'itk>=5.3rc4'
+        r'itk>=5.3.0'
     ]
     )
