@@ -4,11 +4,11 @@ on: [push,pull_request]
 
 jobs:
   cxx-build-workflow:
-    uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-cxx.yml@f8126440134ea50884f5ae97fda39ed6cab5f32f
+    uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-cxx.yml@03626a23c22246e89e36c7e918a158c440f9b099
     with:
       warnings-to-ignore: "\"libcleaver.a.*has no symbols\" \"libitkcleaver.*has no symbols\""
 
   python-build-workflow:
-    uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-package-python.yml@f8126440134ea50884f5ae97fda39ed6cab5f32f
+    uses: InsightSoftwareConsortium/ITKRemoteModuleBuildTestPackageAction/.github/workflows/build-test-package-python.yml@03626a23c22246e89e36c7e918a158c440f9b099
     secrets:
       pypi_password: ${{ secrets.pypi_password }}
