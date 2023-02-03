@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ITKCleaverWebAssembly)
+project(ITKCleaverWasm)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -25,8 +25,8 @@ find_package(ITK REQUIRED
   )
 include(${ITK_USE_FILE})
 
-add_executable(ITKCleaverWasm ITKCleaverWasm.cxx)
-target_link_libraries(ITKCleaverWasm PUBLIC ${ITK_LIBRARIES})
+add_executable(itk-cleaver ITKCleaverWasm.cxx)
+target_link_libraries(itk-cleaver PUBLIC ${ITK_LIBRARIES})
 
 enable_testing()
 add_test(NAME ITKCleaverWasmLabelImageTest

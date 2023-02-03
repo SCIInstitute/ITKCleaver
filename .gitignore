@@ -35,3 +35,8 @@
 Cleaver2
 examples/.ipynb_checkpoints/
 examples/triangle_mesh.vtk
+
+wasi-build
+pnpm-lock.yaml
+node_modules/
+emscripten-build/
