@@ -98,7 +98,7 @@ public:
 
 int main( int argc, char * argv[] )
 {
-  itk::wasm::Pipeline pipeline("itk-cleaver-wasm", "Create a multi-material mesh suitable for simulation/modeling from an input label image or indicator function images", argc, argv);
+  itk::wasm::Pipeline pipeline("itk-cleaver", "Create a multi-material mesh suitable for simulation/modeling from an input label image or indicator function images", argc, argv);
 
   return itk::wasm::SupportInputImageTypes<PipelineFunctor,
    //uint8_t,
