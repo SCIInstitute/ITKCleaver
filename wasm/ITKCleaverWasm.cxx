@@ -19,7 +19,7 @@
 #include "itkPipeline.h"
 #include "itkInputImage.h"
 #include "itkOutputMesh.h"
-#include "itkSupportInputImageTypesNoVectorImage.h"
+#include "itkSupportInputImageTypes.h"
 #include "itkMesh.h"
 
 template<typename TImage>
@@ -98,9 +98,9 @@ public:
 
 int main( int argc, char * argv[] )
 {
-  itk::wasm::Pipeline pipeline("Create a multi-material mesh suitable for simulation/modeling from an input label image or indicator function images", argc, argv);
+  itk::wasm::Pipeline pipeline("itk-cleaver", "Create a multi-material mesh suitable for simulation/modeling from an input label image or indicator function images", argc, argv);
 
-  return itk::wasm::SupportInputImageTypesNoVectorImage<PipelineFunctor,
+  return itk::wasm::SupportInputImageTypes<PipelineFunctor,
    //uint8_t,
    //int8_t,
    uint16_t,
