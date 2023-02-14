@@ -3,8 +3,8 @@ name: WebAssembly
 on: [push,pull_request]
 
 jobs:
-  Build WebAssembly:
-    name: Build WebAssembly
+  build-wasm:
+    name: "Build WebAssembly"
     runs-on: ubuntu-22.04
 
     steps:
