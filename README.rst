@@ -2,7 +2,12 @@ ITKCleaver
 =================================
 
 .. image:: https://github.com/SCIInstitute/ITKCleaver/workflows/Build,%20test,%20package/badge.svg
+    :target: https://github.com/SCIInstitute/ITKCleaver/actions/workflows/build-test-package.yml
     :alt:    Build Status
+
+.. image:: https://github.com/SCIInstitute/ITKCleaver/actions/workflows/wasm.yml/badge.svg
+    :target: https://github.com/SCIInstitute/ITKCleaver/actions/workflows/wasm.yml
+    :alt:    Wasm Build Status
 
 .. image:: https://img.shields.io/pypi/v/itk-cleaver.svg
     :target: https://pypi.python.org/pypi/itk-cleaver
