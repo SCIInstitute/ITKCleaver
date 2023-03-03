@@ -109,5 +109,5 @@ int main( int argc, char * argv[] )
    //double
    float
    >
-  ::Dimensions<3U>("Input", pipeline);
+  ::Dimensions<3U>("-i,--input", pipeline);
 }

@@ -4,13 +4,14 @@
   "description": "npm scripts to generate itk-wasm artifacts.",
   "type": "module",
   "scripts": {
-    "build": "npm run build:emscripten && npm run bindgen:typescript",
-    "build:emscripten": "npx itk-wasm -b emscripten-build build",
+    "build": "npm run build:emscripten && npm run bindgen:typescript && npm run build:wasi",
+    "build:emscripten": "npx itk-wasm -i itkwasm/emscripten:20230214-4d22c050 build",
+    "build:wasi": "npx itk-wasm -i itkwasm/wasi:20230214-4d22c050 build",
     "bindgen:typescript": "npx itk-wasm -b emscripten-build bindgen --output-dir wasm/typescript --package-name itk-cleaver --package-description \"The Cleaver multimaterial tetrahedral meshing tool.\" --repository 'https://github.com/SCIInstitute/Cleaver2'",
     "clean": "git clean -fdx -e node_modules"
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "itk-wasm": "^1.0.0-b.70"
+    "itk-wasm": "^1.0.0-b.74"
   }
 }
