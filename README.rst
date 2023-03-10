@@ -13,6 +13,10 @@ ITKCleaver
     :target: https://pypi.python.org/pypi/itk-cleaver
     :alt: PyPI Version
 
+.. image:: https://img.shields.io/npm/v/@itk-wasm/cleaver.svg
+    :target: https://www.npmjs.com/package/@itk-wasm/cleaver
+    :alt: NPM Version
+
 .. image:: https://img.shields.io/github/license/SCIInstitute/ITKCleaver?color=blue
     :target: https://github.com/SCIInstitute/ITKCleaver/blob/master/LICENSE
     :alt: License
