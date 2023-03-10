@@ -31,7 +31,7 @@ Mesher(itk::wasm::Pipeline & pipeline, std::vector<const TImage *> & inputImages
   using MeshType = itk::Mesh<typename ImageType::PixelType, 3>;
   using OutputMeshType = itk::wasm::OutputMesh<MeshType>;
   OutputMeshType outputTriangleMesh;
-  pipeline.add_option("-t,--triangle", outputTriangleMesh, "Output triangle mesh")->type_name("OUTPUT_MESH");
+  pipeline.add_option("triangle", outputTriangleMesh, "Output triangle mesh")->type_name("OUTPUT_MESH");
 
   double sigma = 1.0;
   pipeline.add_option("-s,--sigma", sigma, "Blending function sigma for input(s) to remove alias artifacts.");
