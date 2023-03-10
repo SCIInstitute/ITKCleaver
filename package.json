@@ -1,6 +1,6 @@
 {
   "name": "itk-cleaver",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "npm scripts to generate itk-wasm artifacts.",
   "type": "module",
   "scripts": {
