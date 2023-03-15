@@ -38,7 +38,7 @@ endif()
 set(BUILD_TESTING ${_itk_build_testing})
 set(BUILD_SHARED_LIBS ${_itk_build_shared})
 
-set(Cleaver_LIBRARIES cleaver)
+set(Cleaver_LIBRARIES cleaver jsoncpp)
 set(Cleaver_INCLUDE_DIRS
   ${Cleaver_SOURCE_DIR}/include
   ${cleaver_lib_SOURCE_DIR}/src/lib
@@ -61,3 +61,4 @@ else()
 endif()
 
 itk_module_target(cleaver NO_INSTALL)
+itk_module_target(jsoncpp NO_INSTALL)
