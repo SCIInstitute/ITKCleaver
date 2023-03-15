@@ -30,20 +30,18 @@ target_link_libraries(itk-cleaver PUBLIC ${ITK_LIBRARIES})
 
 enable_testing()
 add_test(NAME ITKCleaverWasmLabelImageTest
-  COMMAND ITKCleaverWasm
+  COMMAND itk-cleaver
+    ${CMAKE_CURRENT_BINARY_DIR}/mickey-triangle.vtk
   --input
     ${CMAKE_CURRENT_SOURCE_DIR}/mickey.nrrd
-  --triangle
-    ${CMAKE_CURRENT_BINARY_DIR}/mickey-triangle.vtk
   )
 
 add_test(NAME ITKCleaverIndicatorFunctionTest
-  COMMAND ITKCleaverWasm
+  COMMAND itk-cleaver
+    ${CMAKE_CURRENT_BINARY_DIR}/indicator-triangle.vtk
   --input
     ${CMAKE_CURRENT_SOURCE_DIR}/spheres1.nrrd
     ${CMAKE_CURRENT_SOURCE_DIR}/spheres2.nrrd
     ${CMAKE_CURRENT_SOURCE_DIR}/spheres3.nrrd
     ${CMAKE_CURRENT_SOURCE_DIR}/spheres4.nrrd
-  --triangle
-    ${CMAKE_CURRENT_BINARY_DIR}/indicator-triangle.vtk
   )
