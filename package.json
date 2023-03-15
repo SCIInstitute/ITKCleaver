@@ -7,6 +7,7 @@
     "build": "npm run build:emscripten && npm run bindgen:typescript && npm run build:wasi",
     "build:emscripten": "itk-wasm -i itkwasm/emscripten:20230214-4d22c050 build",
     "build:wasi": "itk-wasm -i itkwasm/wasi:20230214-4d22c050 build",
+    "build:wasi:debug": "itk-wasm -i itkwasm/wasi:20230214-4d22c050-debug build -- -DCMAKE_BUILD_TYPE=Debug",
     "bindgen:typescript": "itk-wasm -b emscripten-build bindgen --output-dir wasm/typescript --package-name @itk-wasm/cleaver --package-description \"The Cleaver multimaterial tetrahedral meshing tool.\" --repository 'https://github.com/SCIInstitute/Cleaver2'",
     "clean": "git clean -fdx -e node_modules"
   },
