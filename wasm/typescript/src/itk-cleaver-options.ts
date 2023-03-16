@@ -2,7 +2,7 @@ import { Image } from 'itk-wasm'
 
 interface ItkCleaverOptions {
   /** Input label image or multiple indicator function images */
-  input?: Image
+  input: Image[]
 
   /** Blending function sigma for input(s) to remove alias artifacts. */
   sigma?: number

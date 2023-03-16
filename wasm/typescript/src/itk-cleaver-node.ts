@@ -20,7 +20,7 @@ import path from 'path'
  * @returns {Promise<ItkCleaverNodeResult>} - result object
  */
 async function itkCleaverNode(
-  options: ItkCleaverOptions = {}
+  options: ItkCleaverOptions = { input: [], }
 ) : Promise<ItkCleaverNodeResult> {
 
   const desiredOutputs: Array<PipelineOutput> = [
@@ -35,11 +35,15 @@ async function itkCleaverNode(
   args.push('0')
   // Options
   args.push('--memory-io')
-  if (typeof options.input !== "undefined") {
-    const inputCountString = inputs.length.toString()
-    inputs.push({ type: InterfaceTypes.Image, data: options.input as Image})
-    args.push('--input', inputCountString)
+  if (options.input.length < 1) {
+    throw new Error('"input" option must have a length > 0')
   }
+  args.push('--input')
+  options.input.forEach((inputImage, index) => {
+    args.push((index+0).toString())
+    inputs.push({ type: InterfaceTypes.Image, data: inputImage as Image})
+
+  })
   if (typeof options.sigma !== "undefined") {
     args.push('--sigma', options.sigma.toString())
   }
