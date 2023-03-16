@@ -9,7 +9,11 @@ if(POLICY CMP0077)
 endif()
 
 include(FetchContent)
-set(_itk_build_testing ${BUILD_TESTING})
+if(DEFINED BUILD_TESTING)
+  set(_itk_build_testing ${BUILD_TESTING})
+else()
+  set(_itk_build_testing OFF) # Default
+endif()
 if(WASI OR EMSCRIPTEN)
   # Cleaver lib vendored GTest incompatibility
   set(BUILD_TESTING OFF CACHE BOOL "Build testing code" FORCE)
@@ -38,7 +42,7 @@ if(NOT cleaver_lib_POPULATED)
 endif()
 # Debugging / development, symlink Cleaver2 into the source tree
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Cleaver2/src)
-set(BUILD_TESTING ${_itk_build_testing})
+set(BUILD_TESTING ${_itk_build_testing} CACHE BOOL "Build testing code" FORCE)
 set(BUILD_SHARED_LIBS ${_itk_build_shared})
 
 set(Cleaver_LIBRARIES cleaver jsoncpp)
