@@ -44,7 +44,7 @@ async function itkCleaver(
 
 |     Property     |   Type   | Description                                                                                                                        |
 | :--------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------- |
-|      `input`     |  *Image* | Input label image or multiple indicator function images                                                                            |
+|      `input`     |  *Image[]* | Input label image or multiple indicator function images                                                                            |
 |      `sigma`     | *number* | Blending function sigma for input(s) to remove alias artifacts.                                                                    |
 |  `samplingRate`  | *number* | Sizing field sampling rate. The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes. |
 |    `lipschitz`   | *number* | Sizing field rate of change. the maximum rate of change of element size throughout a mesh.                                         |
@@ -125,7 +125,7 @@ async function itkCleaverNode(
 
 |     Property     |   Type   | Description                                                                                                                        |
 | :--------------: | :------: | :--------------------------------------------------------------------------------------------------------------------------------- |
-|      `input`     |  *Image* | Input label image or multiple indicator function images                                                                            |
+|      `input`     |  *Image[]* | Input label image or multiple indicator function images                                                                            |
 |      `sigma`     | *number* | Blending function sigma for input(s) to remove alias artifacts.                                                                    |
 |  `samplingRate`  | *number* | Sizing field sampling rate. The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes. |
 |    `lipschitz`   | *number* | Sizing field rate of change. the maximum rate of change of element size throughout a mesh.                                         |
