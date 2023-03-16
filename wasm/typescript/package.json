@@ -19,7 +19,16 @@
     "build:browser": "rollup -c ./build/rollup.browser.config.js",
     "build:tsc": "tsc --pretty",
     "build:demo": "vite -c build/vite.config.js build",
-    "test": "npm run test:node",
+    "clean": "git clean -fdx",
+    "test:browser": "start-server-and-test start http-get://localhost:5173 cypress:run",
+    "test:chrome": "start-server-and-test start http-get://localhost:5173 cypress:runChrome",
+    "test:firefox": "start-server-and-test start http-get://localhost:5173 cypress:runFirefox",
+    "cypress:open": "npx cypress open",
+    "cypress:run": "npx cypress run",
+    "cypress:install": "npx cypress install",
+    "cypress:runChrome": "npx cypress run --browser chrome",
+    "cypress:runFirefox": "npx cypress run --browser firefox",
+    "test": "npm run test:node && npm run test:browser",
     "test:node": "ava test/node/**.js"
   },
   "keywords": [
@@ -31,7 +40,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "itk-wasm": "^1.0.0-b.86"
+    "itk-wasm": "^1.0.0-b.87"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.0",
@@ -41,12 +50,14 @@
     "@rollup/plugin-typescript": "^10.0.1",
     "@types/node": "^18.13.0",
     "ava": "^5.2.0",
+    "cypress": "^12.8.1",
     "debug": "^4.3.4",
-    "itk-image-io": "1.0.0-b.86",
+    "itk-image-io": "1.0.0-b.87",
     "rollup": "^3.9.0",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-ignore": "^1.0.10",
     "rollup-plugin-polyfill-node": "^0.11.0",
+    "start-server-and-test": "^1.14.0",
     "supports-color": "^9.3.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.4",
