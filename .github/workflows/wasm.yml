@@ -22,8 +22,13 @@ jobs:
       run: |
         npm run build
 
+    - name: Test WASI
+      run: |
+        npm run test:wasi
+
     - name: Build TypeScript, JavaScript package
       run: |
         cd wasm/typescript
         npm install
         npm run build
+

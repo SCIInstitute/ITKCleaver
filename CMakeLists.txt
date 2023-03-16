@@ -9,8 +9,13 @@ if(POLICY CMP0077)
 endif()
 
 include(FetchContent)
-set(_itk_build_testing ${BUILD_TESTING})
+if(DEFINED BUILD_TESTING)
+  set(_itk_build_testing ${BUILD_TESTING})
+else()
+  set(_itk_build_testing OFF) # Default
+endif()
 if(WASI OR EMSCRIPTEN)
+  # Cleaver lib vendored GTest incompatibility
   set(BUILD_TESTING OFF CACHE BOOL "Build testing code" FORCE)
 endif()
 if (CMAKE_CXX_COMPILER_IS_GNUCXX)
@@ -23,6 +28,9 @@ set(_itk_build_shared ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS OFF)
 set(cleaver_GIT_REPOSITORY "https://github.com/SCIInstitute/Cleaver2")
 set(cleaver_GIT_TAG "02ba7b5fda5578b348a1dd54fb1660ef6cc7faf2")
+# Add https://github.com/SCIInstitute/Cleaver2/pull/122
+set(cleaver_GIT_REPOSITORY "https://github.com/thewtex/Cleaver2")
+set(cleaver_GIT_TAG "2a4d7406b760e7af9f3a0d1f97d6168ddde7d1c7")
 FetchContent_Declare(
   cleaver_lib
   GIT_REPOSITORY ${cleaver_GIT_REPOSITORY}
@@ -34,10 +42,10 @@ if(NOT cleaver_lib_POPULATED)
 endif()
 # Debugging / development, symlink Cleaver2 into the source tree
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Cleaver2/src)
-set(BUILD_TESTING ${_itk_build_testing})
+set(BUILD_TESTING ${_itk_build_testing} CACHE BOOL "Build testing code" FORCE)
 set(BUILD_SHARED_LIBS ${_itk_build_shared})
 
-set(Cleaver_LIBRARIES cleaver)
+set(Cleaver_LIBRARIES cleaver jsoncpp)
 set(Cleaver_INCLUDE_DIRS
   ${Cleaver_SOURCE_DIR}/include
   ${cleaver_lib_SOURCE_DIR}/src/lib
@@ -57,3 +65,4 @@ else()
 endif()
 
 itk_module_target(cleaver NO_INSTALL)
+itk_module_target(jsoncpp NO_INSTALL)

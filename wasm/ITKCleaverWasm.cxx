@@ -24,7 +24,7 @@
 
 template<typename TImage>
 int
-Mesher(itk::wasm::Pipeline & pipeline, std::vector<const TImage *> & inputImages)
+Mesher(itk::wasm::Pipeline & pipeline, std::vector<typename TImage::ConstPointer> & inputImages)
 {
   using ImageType = TImage;
 
@@ -66,7 +66,9 @@ Mesher(itk::wasm::Pipeline & pipeline, std::vector<const TImage *> & inputImages
 
   ITK_WASM_CATCH_EXCEPTION(pipeline, filter->Update());
 
-  outputTriangleMesh.Set(filter->GetOutput(1));
+  typename MeshType::ConstPointer triangleMesh = filter->GetOutput(1);
+  typename MeshType::ConstPointer mmesh = filter->GetOutput(0);
+  outputTriangleMesh.Set(triangleMesh);
 
   return EXIT_SUCCESS;
 }
@@ -85,10 +87,11 @@ public:
 
     ITK_WASM_PRE_PARSE(pipeline);
 
-    std::vector<const ImageType *> loadedInputImages;
-    for(auto image: inputImages)
+    std::vector<typename ImageType::ConstPointer> loadedInputImages;
+    loadedInputImages.resize(inputImages.size());
+    for(size_t ii = 0; ii < inputImages.size(); ++ii)
     {
-      loadedInputImages.push_back(image.Get());
+      loadedInputImages[ii] = inputImages[ii].Get();
     }
 
     int result = Mesher<ImageType>(pipeline, loadedInputImages);

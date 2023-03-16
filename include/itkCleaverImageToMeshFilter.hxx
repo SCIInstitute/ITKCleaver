@@ -658,6 +658,8 @@ CleaverImageToMeshFilter<TInputImage, TOutputMesh>
   {
     delete field;
   }
+
+  mesher.cleanup();
 }
 
 } // end namespace itk
