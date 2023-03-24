@@ -4,7 +4,7 @@ on: [push,pull_request]
 
 jobs:
   build-wasm:
-    name: "Build WebAssembly"
+    name: "build-test-wasm"
     runs-on: ubuntu-22.04
 
     steps:
@@ -36,3 +36,29 @@ jobs:
       run: |
         cd wasm/typescript
         npm run test:node
+
+    - name: Test Browser interface, Chrome
+      uses: cypress-io/github-action@v5
+      with:
+        working-directory: ./wasm/typescript
+        browser: chrome
+        start: npm start
+
+    - name: Test Browser interface, Firefox
+      uses: cypress-io/github-action@v5
+      with:
+        working-directory: ./wasm/typescript
+        browser: firefox
+        start: npm start
+
+    - uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: cypress-screenshots
+        path: wasm/typescript/cypress/screenshots
+
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: cypress-videos
+        path: wasm/typescript/cypress/videos
