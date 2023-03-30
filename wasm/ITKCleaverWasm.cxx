@@ -83,7 +83,7 @@ public:
 
     using InputImageType = itk::wasm::InputImage<ImageType>;
     std::vector<InputImageType> inputImages;
-    pipeline.add_option("-i,--input", inputImages, "Input label image or multiple indicator function images")->type_name("INPUT_IMAGE");
+    auto inputImagesOption = pipeline.add_option("-i,--input", inputImages, "Input label image or multiple indicator function images")->type_name("INPUT_IMAGE");
 
     ITK_WASM_PRE_PARSE(pipeline);
 
@@ -94,6 +94,7 @@ public:
       loadedInputImages[ii] = inputImages[ii].Get();
     }
 
+    inputImagesOption->required();
     int result = Mesher<ImageType>(pipeline, loadedInputImages);
     return result;
   }
