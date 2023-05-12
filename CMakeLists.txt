@@ -27,10 +27,7 @@ endif()
 set(_itk_build_shared ${BUILD_SHARED_LIBS})
 set(BUILD_SHARED_LIBS OFF)
 set(cleaver_GIT_REPOSITORY "https://github.com/SCIInstitute/Cleaver")
-set(cleaver_GIT_TAG "02ba7b5fda5578b348a1dd54fb1660ef6cc7faf2")
-# Add https://github.com/SCIInstitute/Cleaver/pull/122
-set(cleaver_GIT_REPOSITORY "https://github.com/thewtex/Cleaver2")
-set(cleaver_GIT_TAG "2a4d7406b760e7af9f3a0d1f97d6168ddde7d1c7")
+set(cleaver_GIT_TAG "bb1d7e0604171b52f4e2f3b64178860dde0e4a58")
 FetchContent_Declare(
   cleaver_lib
   GIT_REPOSITORY ${cleaver_GIT_REPOSITORY}
