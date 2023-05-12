@@ -32,7 +32,7 @@
 *.app
 
 # Cleaver Repository
-Cleaver2
+Cleaver
 examples/.ipynb_checkpoints/
 examples/triangle_mesh.vtk
 
