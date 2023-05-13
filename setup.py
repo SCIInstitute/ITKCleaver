@@ -19,7 +19,7 @@ setup(
     package_dir={'itk': 'itk'},
     download_url=r'https://github.com/SCIInstitute/ITKCleaver',
     description=r'An ITK interface to the Cleaver multi-material tetrahedral meshing library',
-    long_description='Cleaver2 ( https://github.com/SCIInstitute/Cleaver2/releases) is a free multimaterial tetrahedral meshing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.',
+    long_description='Cleaver ( https://github.com/SCIInstitute/Cleaver/releases) is a free multimaterial tetrahedral meshing tool developed by the NIH Center for Integrative Biomedical Computing at the University of Utah Scientific Computing and Imaging (SCI) Institute.',
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
