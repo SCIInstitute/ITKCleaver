@@ -46,14 +46,14 @@ jobs:
         npm run test:node
 
     - name: Test Browser interface, Chrome
-      uses: cypress-io/github-action@v5
+      uses: cypress-io/github-action@v6
       with:
         working-directory: ./wasm/typescript
         browser: chrome
         start: npm start
 
     - name: Test Browser interface, Firefox
-      uses: cypress-io/github-action@v5
+      uses: cypress-io/github-action@v6
       with:
         working-directory: ./wasm/typescript
         browser: firefox
