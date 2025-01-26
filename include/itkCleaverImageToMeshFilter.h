@@ -37,7 +37,7 @@ template <typename TInputImage, typename TOutputMesh>
 class CleaverImageToMeshFilter : public ImageToMeshFilter<TInputImage, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CleaverImageToMeshFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(CleaverImageToMeshFilter);
 
   static constexpr unsigned int InputImageDimension = TInputImage::ImageDimension;
   static constexpr unsigned int OutputMeshDimension = TOutputMesh::PointDimension;
