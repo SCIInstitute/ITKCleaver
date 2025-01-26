@@ -56,7 +56,7 @@ public:
   using DataObjectPointerArraySizeType = typename Superclass::Superclass::DataObjectPointerArraySizeType;
 
   /** Run-time type information. */
-  itkTypeMacro(CleaverImageToMeshFilter, ImageToMeshFilter);
+  itkOverrideGetNameOfClassMacro(CleaverImageToMeshFilter);
 
   /** Standard New macro. */
   itkNewMacro(Self);
