@@ -22,7 +22,7 @@
 #include "itkSupportInputImageTypes.h"
 #include "itkMesh.h"
 
-template<typename TImage>
+template <typename TImage>
 int
 Mesher(itk::wasm::Pipeline & pipeline, std::vector<typename TImage::ConstPointer> & inputImages)
 {
@@ -37,23 +37,34 @@ Mesher(itk::wasm::Pipeline & pipeline, std::vector<typename TImage::ConstPointer
   pipeline.add_option("-s,--sigma", sigma, "Blending function sigma for input(s) to remove alias artifacts.");
 
   double samplingRate = 1.0;
-  pipeline.add_option("-r,--sampling-rate", samplingRate, "Sizing field sampling rate. The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes.");
+  pipeline.add_option("-r,--sampling-rate",
+                      samplingRate,
+                      "Sizing field sampling rate. The default sample rate will be the dimensions of the volume. "
+                      "Smaller sampling creates coarser meshes.");
 
   double lipschitz = 0.2;
-  pipeline.add_option("-l,--lipschitz", lipschitz, "Sizing field rate of change. the maximum rate of change of element size throughout a mesh.");
+  pipeline.add_option("-l,--lipschitz",
+                      lipschitz,
+                      "Sizing field rate of change. the maximum rate of change of element size throughout a mesh.");
 
   double featureScaling = 1.0;
-  pipeline.add_option("-f,--feature-scaling", featureScaling, "Sizing field feature scaling. Scales features of the mesh effecting element size. Higher feature scaling creates coaser meshes.");
+  pipeline.add_option("-f,--feature-scaling",
+                      featureScaling,
+                      "Sizing field feature scaling. Scales features of the mesh effecting element size. Higher "
+                      "feature scaling creates coaser meshes.");
 
   int padding = 0;
-  pipeline.add_option("-p,--padding", padding, "Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary.");
+  pipeline.add_option(
+    "-p,--padding",
+    padding,
+    "Sizing field padding. Adds a volume buffer around the data. Useful when volumes intersect near the boundary.");
 
   ITK_WASM_PARSE(pipeline);
 
   using FilterType = itk::CleaverImageToMeshFilter<ImageType, MeshType>;
   typename FilterType::Pointer filter = FilterType::New();
 
-  for(size_t ii = 0; ii < inputImages.size(); ii++)
+  for (size_t ii = 0; ii < inputImages.size(); ii++)
   {
     filter->SetInput(ii, inputImages[ii]);
   }
@@ -73,23 +84,26 @@ Mesher(itk::wasm::Pipeline & pipeline, std::vector<typename TImage::ConstPointer
   return EXIT_SUCCESS;
 }
 
-template<typename TImage>
+template <typename TImage>
 class PipelineFunctor
 {
 public:
-  int operator()(itk::wasm::Pipeline & pipeline)
+  int
+  operator()(itk::wasm::Pipeline & pipeline)
   {
     using ImageType = TImage;
 
     using InputImageType = itk::wasm::InputImage<ImageType>;
     std::vector<InputImageType> inputImages;
-    auto inputImagesOption = pipeline.add_option("-i,--input", inputImages, "Input label image or multiple indicator function images")->type_name("INPUT_IMAGE");
+    auto                        inputImagesOption =
+      pipeline.add_option("-i,--input", inputImages, "Input label image or multiple indicator function images")
+        ->type_name("INPUT_IMAGE");
 
     ITK_WASM_PRE_PARSE(pipeline);
 
     std::vector<typename ImageType::ConstPointer> loadedInputImages;
     loadedInputImages.resize(inputImages.size());
-    for(size_t ii = 0; ii < inputImages.size(); ++ii)
+    for (size_t ii = 0; ii < inputImages.size(); ++ii)
     {
       loadedInputImages[ii] = inputImages[ii].Get();
     }
@@ -100,18 +114,21 @@ public:
   }
 };
 
-int main( int argc, char * argv[] )
+int
+main(int argc, char * argv[])
 {
-  itk::wasm::Pipeline pipeline("itk-cleaver", "Create a multi-material mesh suitable for simulation/modeling from an input label image or indicator function images", argc, argv);
+  itk::wasm::Pipeline pipeline("itk-cleaver",
+                               "Create a multi-material mesh suitable for simulation/modeling from an input label "
+                               "image or indicator function images",
+                               argc,
+                               argv);
 
   return itk::wasm::SupportInputImageTypes<PipelineFunctor,
-   //uint8_t,
-   //int8_t,
-   uint16_t,
-   //int16_t,
-   //float,
-   //double
-   float
-   >
-  ::Dimensions<3U>("-i,--input", pipeline);
+                                           // uint8_t,
+                                           // int8_t,
+                                           uint16_t,
+                                           // int16_t,
+                                           // float,
+                                           // double
+                                           float>::Dimensions<3U>("-i,--input", pipeline);
 }

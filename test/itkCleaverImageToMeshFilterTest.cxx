@@ -54,7 +54,8 @@ public:
 };
 } // namespace
 
-int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
+int
+itkCleaverImageToMeshFilterTest(int argc, char * argv[])
 {
   if (argc < 3)
   {
@@ -78,11 +79,11 @@ int itkCleaverImageToMeshFilterTest(int argc, char * argv[])
   ITK_EXERCISE_BASIC_OBJECT_METHODS(filter, CleaverImageToMeshFilter, ImageToMeshFilter);
 
   for (int ii = 2; ii < argc; ii++)
-    {
+  {
     const char * inputImageFileName = argv[ii];
-    auto image = itk::ReadImage<ImageType>(inputImageFileName);
-    filter->SetInput(ii-2, image);
-    }
+    auto         image = itk::ReadImage<ImageType>(inputImageFileName);
+    filter->SetInput(ii - 2, image);
+  }
 
   bool isIndicator = true;
   filter->SetInputIsIndicatorFunction(isIndicator);
