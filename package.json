@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:emscripten && npm run build:wasi && npm run bindgen:typescript",
-    "build:emscripten": "itk-wasm -i itkwasm/emscripten:20230328-71e6501e build",
-    "build:emscripten:debug": "itk-wasm -i itkwasm/emscripten:20230328-71e6501e-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
-    "build:wasi": "itk-wasm -i itkwasm/wasi:20230328-71e6501e build",
-    "build:wasi:debug": "itk-wasm -i itkwasm/wasi:20230328-71e6501e-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
+    "build:emscripten": "itk-wasm -i itkwasm/emscripten:20250619-3165ade4 build",
+    "build:emscripten:debug": "itk-wasm -i itkwasm/emscripten:20250619-3165ade4-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
+    "build:wasi": "itk-wasm -i itkwasm/wasi:20250619-3165ade4 build",
+    "build:wasi:debug": "itk-wasm -i itkwasm/wasi:20250619-3165ade4-debug build -- -DCMAKE_BUILD_TYPE:STRING=Debug",
     "bindgen:typescript": "itk-wasm -b emscripten-build bindgen --output-dir wasm/typescript --package-name @itk-wasm/cleaver --package-description \"The Cleaver multimaterial tetrahedral meshing tool.\" --repository 'https://github.com/SCIInstitute/Cleaver'",
     "test": "npm run test:wasi",
     "test:wasi": "itk-wasm test --test-dir wasm",
@@ -16,6 +16,6 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "itk-wasm": "^1.0.0-b.91"
+    "itk-wasm": "^1.0.0-b.188"
   }
 }

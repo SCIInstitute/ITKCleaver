@@ -13,14 +13,14 @@ on:
 jobs:
   build-wasm:
     name: "build-test-wasm"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
 
     - uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
       with:
-        node-version: '18'
+        node-version: '22'
 
     - name: Install
       run: |
@@ -58,15 +58,3 @@ jobs:
         working-directory: ./wasm/typescript
         browser: firefox
         start: npm start
-
-    - uses: actions/upload-artifact@v3
-      if: failure()
-      with:
-        name: cypress-screenshots
-        path: wasm/typescript/cypress/screenshots
-
-    - uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: cypress-videos
-        path: wasm/typescript/cypress/videos
