@@ -72,9 +72,9 @@ public:
   itkSetMacro(Sigma, double);
   itkGetConstMacro(Sigma, double);
 
-  /** Sizing field sampling rate. The sampling rate of the input indicator functions or calculated indicator functions from segmentation files.
-   * The default sample rate will be the dimensions of the volume. Smaller sampling creates coarser meshes.
-   * Adjusting this parameter will also affect Cleaver’s runtime, with smaller values running faster. */
+  /** Sizing field sampling rate. The sampling rate of the input indicator functions or calculated indicator functions
+   * from segmentation files. The default sample rate will be the dimensions of the volume. Smaller sampling creates
+   * coarser meshes. Adjusting this parameter will also affect Cleaver’s runtime, with smaller values running faster. */
   itkSetMacro(SamplingRate, double);
   itkGetConstMacro(SamplingRate, double);
 
@@ -84,7 +84,8 @@ public:
   itkSetMacro(Lipschitz, double);
   itkGetConstMacro(Lipschitz, double);
 
-  /** Sizing field feature scaling. Scales features of the mesh effecting element size. Higher feature scaling creates coaser meshes. */
+  /** Sizing field feature scaling. Scales features of the mesh effecting element size. Higher feature scaling creates
+   * coaser meshes. */
   itkSetMacro(FeatureScaling, double);
   itkGetConstMacro(FeatureScaling, double);
 
@@ -106,20 +107,22 @@ protected:
   CleaverImageToMeshFilter();
   ~CleaverImageToMeshFilter() override = default;
 
-  void PrintSelf(std::ostream & os, Indent indent) const override;
+  void
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   using OutputRegionType = typename OutputMeshType::RegionType;
 
-  void GenerateData() override;
+  void
+  GenerateData() override;
 
 private:
-  bool m_InputIsIndicatorFunction{false};
-  double m_Alpha{0.4};
-  double m_SamplingRate{1.0};
-  double m_Lipschitz{0.2};
-  double m_FeatureScaling{1.0};
-  int m_Padding{0};
-  double m_Sigma{1.0};
+  bool   m_InputIsIndicatorFunction{ false };
+  double m_Alpha{ 0.4 };
+  double m_SamplingRate{ 1.0 };
+  double m_Lipschitz{ 0.2 };
+  double m_FeatureScaling{ 1.0 };
+  int    m_Padding{ 0 };
+  double m_Sigma{ 1.0 };
 };
 } // namespace itk
 
