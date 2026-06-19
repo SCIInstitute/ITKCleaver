@@ -14,10 +14,11 @@ if(DEFINED BUILD_TESTING)
 else()
   set(_itk_build_testing OFF) # Default
 endif()
-if(WASI OR EMSCRIPTEN)
-  # Cleaver lib vendored GTest incompatibility
-  set(BUILD_TESTING OFF CACHE BOOL "Build testing code" FORCE)
-endif()
+# Disable testing for the vendored Cleaver lib — its bundled googletest
+# (via CIBC-Internal/googletest ExternalProject) uses cmake_minimum_required
+# < 3.5 which CMake >= 4.0 rejects. The ITK module has its own tests.
+# Upstream fix: SCIInstitute/Cleaver#130
+set(BUILD_TESTING OFF CACHE BOOL "Build testing code" FORCE)
 if (CMAKE_CXX_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-maybe-uninitialized")
 endif()
